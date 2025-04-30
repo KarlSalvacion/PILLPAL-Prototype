@@ -6,4 +6,6 @@ export interface Medicine {
   intakeTime: string;
   nextReminder: string;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
 } 

@@ -1,27 +1,97 @@
 import { StyleSheet } from "react-native";
 
 const stylesMedicineScreen = StyleSheet.create({
-    addButton: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        backgroundColor: '#007AFF',
-        padding: 15,
-        borderRadius: 30,
+    container: {
+        flex: 1,
+        backgroundColor: '#F5F5F5',
+      },
+      scrollView: {
+        flex: 1,
+        padding: 16,
+      },
+      section: {
+        marginBottom: 24,
+      },
+      sectionTitle: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#177581',
+        marginBottom: 16,
+      },
+      medicineBox: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 12,
         shadowColor: '#000',
         shadowOffset: {
-            width: 0,
-            height: 2,
+          width: 0,
+          height: 2,
         },
-        shadowOpacity: 0.25,
+        shadowOpacity: 0.1,
         shadowRadius: 3.84,
         elevation: 5,
-    },
-    addButtonText: {
-        color: '#fff',
+      },
+      medicineHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+      },
+      medicineName: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#177581',
+        marginLeft: 8,
+      },
+      medicineDetails: {
+        marginTop: 8,
+      },
+      detailText: {
+        fontSize: 14,
+        color: '#666666',
+        marginBottom: 4,
+      },
+      actionButtons: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        marginTop: 12,
+        gap: 12,
+      },
+      checkButton: {
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: '#E6F7F9',
+      },
+      deleteButton: {
+        padding: 8,
+        borderRadius: 8,
+        backgroundColor: '#F9E6E6',
+      },
+      emptyState: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 12,
+        marginBottom: 12,
+      },
+      emptyStateText: {
+        fontSize: 16,
+        color: '#666666',
+        textAlign: 'center',
+      },
+      addButton: {
+        backgroundColor: '#177581',
+        padding: 16,
+        borderRadius: 8,
+        margin: 16,
+        alignItems: 'center',
+      },
+      addButtonText: {
+        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
-    },
+      },
 });
 
 export default stylesMedicineScreen;

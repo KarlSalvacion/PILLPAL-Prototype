@@ -1,38 +1,152 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, TouchableOpacity } from 'react-native';
+import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useMedicine } from '../context/MedicineContext';
 import TopNavigationBar from '../components/TopNavigationBar';
-import stylesMedicineScreen from 'styles/styles-screen/StylesMedicineScreen';
+import stylesMedicineScreen from '../styles/styles-screen/StylesMedicineScreen';
 
 const MedicineScreen = ({ navigation }: any) => {
+  const { medicines, markMedicineAsDone, deleteMedicine } = useMedicine();
+  
+  const activeMedicines = medicines.filter(medicine => medicine.isActive);
+  const inactiveMedicines = medicines.filter(medicine => !medicine.isActive);
+
+  const handleMarkAsDone = async (id: string) => {
+    Alert.alert(
+      'Confirm',
+      'Are you sure you want to mark this medicine as done?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: async () => {
+            try {
+              await markMedicineAsDone(id);
+            } catch (error) {
+              Alert.alert('Error', 'Failed to update medicine status');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleDelete = async (id: string) => {
+    Alert.alert(
+      'Confirm',
+      'Are you sure you want to delete this medicine?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteMedicine(id);
+            } catch (error) {
+              Alert.alert('Error', 'Failed to delete medicine');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const renderMedicineBox = (medicine: any, isActive: boolean) => (
+    <View key={medicine.id} style={stylesMedicineScreen.medicineBox}>
+      <View style={stylesMedicineScreen.medicineHeader}>
+        <MaterialCommunityIcons name="pill" size={24} color="#177581" />
+        <Text style={stylesMedicineScreen.medicineName}>{medicine.name}</Text>
+      </View>
+      
+      <View style={stylesMedicineScreen.medicineDetails}>
+        <Text style={stylesMedicineScreen.detailText}>
+          Dosage: {medicine.dosage}
+        </Text>
+        <Text style={stylesMedicineScreen.detailText}>
+          Mode of Intake: {medicine.intakeMode}
+        </Text>
+      </View>
+
+      <View style={stylesMedicineScreen.actionButtons}>
+        {isActive ? (
+          <>
+            <Pressable
+              style={stylesMedicineScreen.checkButton}
+              onPress={() => handleMarkAsDone(medicine.id)}
+            >
+              <MaterialCommunityIcons name="check" size={24} color="#177581" />
+            </Pressable>
+            <Pressable
+              style={stylesMedicineScreen.deleteButton}
+              onPress={() => handleDelete(medicine.id)}
+            >
+              <MaterialCommunityIcons name="trash-can" size={24} color="#177581" />
+            </Pressable>
+          </>
+        ) : (
+          <Pressable
+            style={stylesMedicineScreen.deleteButton}
+            onPress={() => handleDelete(medicine.id)}
+          >
+            <MaterialCommunityIcons name="trash-can" size={24} color="#177581" />
+          </Pressable>
+        )}
+      </View>
+    </View>
+  );
+
   return (
-    <View style={styles.container}>
+    <View style={stylesMedicineScreen.container}>
       <TopNavigationBar 
         title="Medicine"
         onMenuPress={() => navigation.openDrawer()}
         onNotificationPress={() => console.log('Notification pressed')}
         onContactPress={() => console.log('Contact pressed')}
       />
-      <Text style={styles.text}>Medicine Screen</Text>
+
+      <ScrollView style={stylesMedicineScreen.scrollView}>
+        <View style={stylesMedicineScreen.section}>
+          <Text style={stylesMedicineScreen.sectionTitle}>Active Medicines</Text>
+          {activeMedicines.length > 0 ? (
+            activeMedicines.map(medicine => renderMedicineBox(medicine, true))
+          ) : (
+            <View style={stylesMedicineScreen.emptyState}>
+              <Text style={stylesMedicineScreen.emptyStateText}>
+                No active medicines
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={stylesMedicineScreen.section}>
+          <Text style={stylesMedicineScreen.sectionTitle}>Inactive Medicines</Text>
+          {inactiveMedicines.length > 0 ? (
+            inactiveMedicines.map(medicine => renderMedicineBox(medicine, false))
+          ) : (
+            <View style={stylesMedicineScreen.emptyState}>
+              <Text style={stylesMedicineScreen.emptyStateText}>
+                No inactive medicines
+              </Text>
+            </View>
+          )}
+        </View>
+      </ScrollView>
 
       <Pressable
-          style={stylesMedicineScreen.addButton}
-          onPress={() => navigation.navigate('AddMedicine')}
-        >
-          <Text style={stylesMedicineScreen.addButtonText}>Add Medicine</Text>
-    </Pressable>
+        style={stylesMedicineScreen.addButton}
+        onPress={() => navigation.navigate('AddMedicine')}
+      >
+        <Text style={stylesMedicineScreen.addButtonText}>Add Medicine</Text>
+      </Pressable>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  text: {
-    fontSize: 20,
-    color: '#333',
-  },
-});
 
 export default MedicineScreen; 
