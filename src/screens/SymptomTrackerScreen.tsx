@@ -37,6 +37,7 @@ const SymptomTrackerScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       <TopNavigationBar 
         title="Symptom Tracker"
+        navigation={navigation}
         onMenuPress={() => navigation.openDrawer()}
         onNotificationPress={() => console.log('Notification pressed')}
         onContactPress={() => console.log('Contact pressed')}

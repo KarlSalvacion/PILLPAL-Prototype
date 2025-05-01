@@ -1,32 +1,46 @@
+import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useAuth } from '../context/AuthContext';
 import HomeScreen from '../screens/HomeScreen';
 import AddMedicineScreen from '../screens/AddMedicineScreen';
+import ContactScreen from '../screens/ContactScreen';
+import NotificationScreen from '../screens/NotificationScreen';
+import SignInScreen from '../screens/SignInScreen';
+import SignUpScreen from '../screens/SignUpScreen';
 import TabNavigator from './TabNavigator';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const AppNavigator = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
-    <Stack.Navigator>
-      <Stack.Screen 
-        name="MainTabs" 
-        component={TabNavigator}
-        options={{
-          headerShown: false
-        }}
-      />
-      <Stack.Screen 
-        name="AddMedicine" 
-        component={AddMedicineScreen}
-        options={{
-          title: 'Add Medicine',
-          headerStyle: {
-            backgroundColor: '#007AFF',
-          },
-          headerTintColor: '#fff',
-        }}
-      />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {!isAuthenticated ? (
+        <>
+          <Stack.Screen name="SignIn" component={SignInScreen} />
+          <Stack.Screen name="SignUp" component={SignUpScreen} />
+        </>
+      ) : (
+        <>
+          <Stack.Screen name="MainTabs" component={TabNavigator} />
+          <Stack.Screen 
+            name="AddMedicine" 
+            component={AddMedicineScreen}
+            options={{
+              headerShown: true,
+              title: 'Add Medicine',
+              headerStyle: {
+                backgroundColor: '#007AFF',
+              },
+              headerTintColor: '#fff',
+            }}
+          />
+          <Stack.Screen name="Contacts" component={ContactScreen} />
+          <Stack.Screen name="Notifications" component={NotificationScreen} />
+        </>
+      )}
     </Stack.Navigator>
   );
 };

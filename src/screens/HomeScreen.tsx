@@ -43,9 +43,7 @@ const HomeScreen = ({ navigation }: any) => {
     <View style={stylesHomeScreen.mainContainer}>
       <TopNavigationBar 
         title="Home"
-        onMenuPress={() => navigation.openDrawer()}
-        onNotificationPress={() => console.log('Notification pressed')}
-        onContactPress={() => console.log('Contact pressed')}
+        navigation={navigation}
       />
 
       <View style={stylesHomeScreen.calendarSection}>
