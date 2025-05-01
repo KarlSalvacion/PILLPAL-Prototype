@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, TouchableOpacity } from 'react-native';
-import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import SideMenu from './SideMenu';
 import stylesTopNavigator from '../styles/styles-components/StylesTopNavigationBar';
 import { useAuth } from '../context/AuthContext';
@@ -34,7 +34,7 @@ const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
 
         <View style={stylesTopNavigator.iconContainer}>
           <TouchableOpacity onPress={onContactPress || (() => navigation.navigate('Contacts'))}>
-            <MaterialCommunityIcons name="contacts" style={stylesTopNavigator.iconContact} />
+            <MaterialIcons name="contact-emergency" style={stylesTopNavigator.iconContact} />
           </TouchableOpacity>
           <TouchableOpacity onPress={onNotificationPress || (() => navigation.navigate('Notifications'))}>
             <Ionicons name="notifications" style={stylesTopNavigator.iconNotification} />

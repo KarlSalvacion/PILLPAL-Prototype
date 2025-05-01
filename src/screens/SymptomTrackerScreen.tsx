@@ -1,158 +1,147 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Modal } from 'react-native';
+import { View, Text, Pressable, Alert, ScrollView } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSymptoms } from '../context/SymptomContext';
-import { allSymptoms } from '../data/SymptomsList';
-import { Ionicons } from '@expo/vector-icons';
-import TopNavigationBar from '../components/TopNavigationBar';
+import AddSymptomModal from '../components/AddSymptomModal';
+import stylesSymptomTracker from '../styles/styles-screen/StylesSymptomTracker';
 
 const SymptomTrackerScreen = ({ navigation }: any) => {
-  const { selectedSymptoms, toggleSymptom } = useSymptoms();
+  const { trackedSymptoms, addSymptoms, removeSymptom, toggleSymptom } = useSymptoms();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const renderSymptomItem = (symptom: typeof allSymptoms[0]) => {
-    const isSelected = selectedSymptoms.some(s => s.id === symptom.id);
-    
-    return (
-      <TouchableOpacity
-        key={symptom.id}
-        style={[
-          styles.symptomItem,
-          { backgroundColor: isSelected ? symptom.color : '#f5f5f5' }
-        ]}
-        onPress={() => toggleSymptom(symptom)}
-      >
-        <Text style={[styles.symptomText, { color: isSelected ? 'white' : 'black' }]}>
-          {symptom.name}
-        </Text>
-        {isSelected && (
-          <Text style={styles.treatmentText}>
-            Treatment: {symptom.treatment}
-          </Text>
-        )}
-      </TouchableOpacity>
+  const activeSymptoms = trackedSymptoms.filter(symptom => !symptom.isChecked);
+  const resolvedSymptoms = trackedSymptoms.filter(symptom => symptom.isChecked);
+
+  const handleAddSymptoms = async (selectedSymptoms: string[]) => {
+    await addSymptoms(selectedSymptoms);
+  };
+
+  const handleDeleteSymptom = (id: string) => {
+    Alert.alert(
+      'Delete Symptom',
+      'Are you sure you want to delete this symptom?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => removeSymptom(id),
+        },
+      ],
     );
   };
 
-  return (
-    <View style={styles.container}>
-      <TopNavigationBar 
-        title="Symptom Tracker"
-        navigation={navigation}
-        onMenuPress={() => navigation.openDrawer()}
-        onNotificationPress={() => console.log('Notification pressed')}
-        onContactPress={() => console.log('Contact pressed')}
-      />
+  const handleToggleSymptom = (id: string) => {
+    Alert.alert(
+      'Mark as Resolved',
+      'Do you want to mark this symptom as resolved?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Confirm',
+          onPress: () => toggleSymptom(id),
+        },
+      ],
+    );
+  };
 
-      <View style={styles.header}>
-        <Text style={styles.title}>Symptom Tracker</Text>
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => setIsModalVisible(true)}
-        >
-          <Ionicons name="add" size={24} color="white" />
-        </TouchableOpacity>
+  const renderSymptomItem = (symptom: any, isResolved: boolean) => (
+    <View key={symptom.id} style={stylesSymptomTracker.symptomItem}>
+      <View style={stylesSymptomTracker.symptomHeader}>
+        <MaterialCommunityIcons name="alert-circle" size={24} color="#177581" />
+        <Text style={stylesSymptomTracker.symptomName}>{symptom.name}</Text>
+      </View>
+      
+      <View style={stylesSymptomTracker.symptomDetails}>
+        {symptom.treatment && (
+          <Text style={stylesSymptomTracker.detailText}>
+            Treatment: {symptom.treatment}
+          </Text>
+        )}
       </View>
 
-      <ScrollView style={styles.symptomsList}>
-        {allSymptoms.map(renderSymptomItem)}
+      <View style={stylesSymptomTracker.actionButtons}>
+        {!isResolved ? (
+          <>
+            <Pressable
+              style={stylesSymptomTracker.checkButton}
+              onPress={() => handleToggleSymptom(symptom.id)}
+            >
+              <MaterialCommunityIcons name="check" size={24} color="#177581" />
+            </Pressable>
+            <Pressable
+              style={stylesSymptomTracker.deleteButton}
+              onPress={() => handleDeleteSymptom(symptom.id)}
+            >
+              <MaterialCommunityIcons name="trash-can" size={24} color="#177581" />
+            </Pressable>
+          </>
+        ) : (
+          <Pressable
+            style={stylesSymptomTracker.deleteButton}
+            onPress={() => handleDeleteSymptom(symptom.id)}
+          >
+            <MaterialCommunityIcons name="trash-can" size={24} color="#177581" />
+          </Pressable>
+        )}
+      </View>
+    </View>
+  );
+
+  return (
+    <View style={stylesSymptomTracker.container}>
+      <View style={stylesSymptomTracker.header}>
+        <Text style={stylesSymptomTracker.title}>Symptom Tracker</Text>
+      </View>
+
+      <ScrollView style={stylesSymptomTracker.scrollView}>
+        <View style={stylesSymptomTracker.section}>
+          <Text style={stylesSymptomTracker.sectionTitle}>Active Symptoms</Text>
+          {activeSymptoms.length > 0 ? (
+            activeSymptoms.map(symptom => renderSymptomItem(symptom, false))
+          ) : (
+            <View style={stylesSymptomTracker.emptyState}>
+              <Text style={stylesSymptomTracker.emptyStateText}>
+                No active symptoms
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={stylesSymptomTracker.section}>
+          <Text style={stylesSymptomTracker.sectionTitle}>Resolved Symptoms</Text>
+          {resolvedSymptoms.length > 0 ? (
+            resolvedSymptoms.map(symptom => renderSymptomItem(symptom, true))
+          ) : (
+            <View style={stylesSymptomTracker.emptyState}>
+              <Text style={stylesSymptomTracker.emptyStateText}>
+                No resolved symptoms
+              </Text>
+            </View>
+          )}
+        </View>
       </ScrollView>
 
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setIsModalVisible(false)}
+      <Pressable
+        style={stylesSymptomTracker.addButton}
+        onPress={() => setIsModalVisible(true)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Add New Symptom</Text>
-            {/* Add your symptom form here */}
-            <TouchableOpacity
-              style={styles.closeButton}
-              onPress={() => setIsModalVisible(false)}
-            >
-              <Text style={styles.closeButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        <MaterialCommunityIcons name="plus" size={24} color="#fff" />
+      </Pressable>
+
+      <AddSymptomModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onSave={handleAddSymptoms}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  addButton: {
-    backgroundColor: '#007AFF',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  symptomsList: {
-    flex: 1,
-    padding: 16,
-  },
-  symptomItem: {
-    padding: 16,
-    borderRadius: 8,
-    marginBottom: 12,
-  },
-  symptomText: {
-    fontSize: 18,
-    fontWeight: '500',
-  },
-  treatmentText: {
-    marginTop: 8,
-    fontSize: 14,
-    color: 'white',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    borderRadius: 12,
-    padding: 20,
-    width: '80%',
-    maxHeight: '80%',
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
-  closeButton: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
-  },
-});
 
 export default SymptomTrackerScreen; 

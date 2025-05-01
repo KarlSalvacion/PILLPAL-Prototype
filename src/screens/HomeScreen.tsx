@@ -122,31 +122,49 @@ const HomeScreen = ({ navigation }: any) => {
 
         {/* MEDICINE SECTION */}
         <ScrollView style={stylesHomeScreen.medicineScrollView}>
+          {selectedDayMedicines.length > 0 && (
+            <View style={stylesHomeScreen.medicineTextContainer}>
+              <Text style={stylesHomeScreen.medicineText}>Your Medicine Intake is in:</Text>
+            </View>
+          )}
           {selectedDayMedicines.length > 0 ? (
             selectedDayMedicines.map((medicine) => (
               <View key={medicine.id} style={stylesHomeScreen.medicineIntakeContainer}>
-                <Text style={stylesHomeScreen.medicineText}>Your Medicine Intake is in:</Text>
                 <View style={stylesHomeScreen.medicineBox}>
                   <View style={stylesHomeScreen.leftSide}>
                     <MaterialCommunityIcons name="pill" style={stylesHomeScreen.pillIcon} />
                     <Text style={stylesHomeScreen.medicineName}>{medicine.name}</Text>
                     <Text style={stylesHomeScreen.medicineDetails}>
-                      Dosage: {medicine.dosage}
+                     {medicine.dosage}
                     </Text>
                     <Text style={stylesHomeScreen.medicineDetails}>
-                      Mode: {medicine.intakeMode}
+                      {medicine.intakeMode.charAt(0).toUpperCase() + medicine.intakeMode.slice(1)} intake
                     </Text>
+                    <Text style={stylesHomeScreen.medicineDetails}>
+                      Quantity: {medicine.quantity || 1}
+                    </Text>
+                    
                   </View>
                   <View style={stylesHomeScreen.verticalLine}></View>
                   <View style={stylesHomeScreen.rightSide}>
                     <Feather name="clock" style={stylesHomeScreen.clockIcon} />
                     <Text style={stylesHomeScreen.timeText}>{formatTime(medicine.nextReminder)}</Text>
+                    {medicine.isRepeating && (
+                      <>
+                        <Text style={stylesHomeScreen.medicineDetails}>
+                          {medicine.repeatCount} times per day
+                        </Text>
+                        <Text style={stylesHomeScreen.medicineDetails}>
+                          Every {medicine.intervalHours} hours
+                        </Text>
+                      </>
+                    )}
                   </View>
                 </View>
               </View>
             ))
           ) : (
-            <View style={stylesHomeScreen.medicineIntakeContainer}>
+            <View style={stylesHomeScreen.noMedicineIntakeContainer}>
               <Text style={stylesHomeScreen.medicineText}>No medicines scheduled for this day</Text>
             </View>
           )}
