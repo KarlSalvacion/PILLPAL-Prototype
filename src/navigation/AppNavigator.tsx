@@ -29,10 +29,10 @@ const AppNavigator = () => {
             name="AddMedicine" 
             component={AddMedicineScreen}
             options={{
-              headerShown: true,
+              headerShown: false,
               title: 'Add Medicine',
               headerStyle: {
-                backgroundColor: '#007AFF',
+                backgroundColor: 'red',
               },
               headerTintColor: '#fff',
             }}

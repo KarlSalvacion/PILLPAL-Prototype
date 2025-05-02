@@ -136,7 +136,7 @@ const stylesHomeScreen = StyleSheet.create({
     
     horizontalLine: {
         width: '100%',
-        marginTop: 5,
+        marginVertical: 5,
         height: 1,
         backgroundColor: 'rgb(191, 214, 217)',
     },
@@ -144,7 +144,12 @@ const stylesHomeScreen = StyleSheet.create({
     // MEDICINE SECTION
     medicineIntakeContainer: {
         width: '100%',
-        padding: 20,
+        padding: 0,
+    },
+
+    noMedicineIntakeContainer: {
+        width: '100%',
+        paddingHorizontal: 20,
     },
 
     medicineScrollView: {
@@ -155,10 +160,18 @@ const stylesHomeScreen = StyleSheet.create({
         fontSize: 16,
         color: 'rgb(23, 117, 129)',
         fontWeight: 'bold',
-        marginBottom: 10,
+        textAlign: 'left',
+    },
+
+    medicineTextContainer: {
+        alignItems: 'flex-start',
+        width: '100%',
+        paddingHorizontal: 20,
     },
 
     medicineBox: {
+        marginHorizontal: 20,
+        marginTop: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -202,7 +215,7 @@ const stylesHomeScreen = StyleSheet.create({
 
     verticalLine: {
         width: 2,
-        marginRight: -100,
+        
         height: '100%',
         backgroundColor: 'rgb(92, 160, 167)',
     },

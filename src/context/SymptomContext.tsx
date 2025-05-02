@@ -1,29 +1,88 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Symptom } from '../data/SymptomsList';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { allSymptoms } from '../data/SymptomsList';
+
+interface TrackedSymptom {
+  id: string;
+  name: string;
+  isChecked: boolean;
+  treatment?: string;
+}
 
 interface SymptomContextType {
-  selectedSymptoms: Symptom[];
-  toggleSymptom: (symptom: Symptom) => void;
+  trackedSymptoms: TrackedSymptom[];
+  addSymptoms: (symptoms: string[]) => Promise<void>;
+  removeSymptom: (id: string) => Promise<void>;
+  toggleSymptom: (id: string) => Promise<void>;
 }
 
 const SymptomContext = createContext<SymptomContextType | undefined>(undefined);
 
-export const SymptomProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [selectedSymptoms, setSelectedSymptoms] = useState<Symptom[]>([]);
+export const SymptomProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [trackedSymptoms, setTrackedSymptoms] = useState<TrackedSymptom[]>([]);
 
-  const toggleSymptom = (symptom: Symptom) => {
-    setSelectedSymptoms(prev => {
-      const isSelected = prev.some(s => s.id === symptom.id);
-      if (isSelected) {
-        return prev.filter(s => s.id !== symptom.id);
-      } else {
-        return [...prev, symptom];
+  useEffect(() => {
+    loadTrackedSymptoms();
+  }, []);
+
+  const loadTrackedSymptoms = async () => {
+    try {
+      const storedSymptoms = await AsyncStorage.getItem('trackedSymptoms');
+      if (storedSymptoms) {
+        setTrackedSymptoms(JSON.parse(storedSymptoms));
+      }
+    } catch (error) {
+      console.error('Error loading tracked symptoms:', error);
+    }
+  };
+
+  const saveTrackedSymptoms = async (symptoms: TrackedSymptom[]) => {
+    try {
+      await AsyncStorage.setItem('trackedSymptoms', JSON.stringify(symptoms));
+      setTrackedSymptoms(symptoms);
+    } catch (error) {
+      console.error('Error saving tracked symptoms:', error);
+    }
+  };
+
+  const addSymptoms = async (symptomIds: string[]) => {
+    const newSymptoms = symptomIds.map(id => {
+      const symptom = allSymptoms.find(s => s.id === id);
+      return {
+        id,
+        name: symptom?.name || '',
+        isChecked: false,
+        treatment: symptom?.treatment
+      };
+    });
+
+    const updatedSymptoms = [...trackedSymptoms];
+    newSymptoms.forEach(newSymptom => {
+      if (!updatedSymptoms.some(s => s.id === newSymptom.id)) {
+        updatedSymptoms.push(newSymptom);
       }
     });
+
+    await saveTrackedSymptoms(updatedSymptoms);
+  };
+
+  const removeSymptom = async (id: string) => {
+    const updatedSymptoms = trackedSymptoms.filter(symptom => symptom.id !== id);
+    await saveTrackedSymptoms(updatedSymptoms);
+  };
+
+  const toggleSymptom = async (id: string) => {
+    const updatedSymptoms = trackedSymptoms.map(symptom => {
+      if (symptom.id === id) {
+        return { ...symptom, isChecked: !symptom.isChecked };
+      }
+      return symptom;
+    });
+    await saveTrackedSymptoms(updatedSymptoms);
   };
 
   return (
-    <SymptomContext.Provider value={{ selectedSymptoms, toggleSymptom }}>
+    <SymptomContext.Provider value={{ trackedSymptoms, addSymptoms, removeSymptom, toggleSymptom }}>
       {children}
     </SymptomContext.Provider>
   );

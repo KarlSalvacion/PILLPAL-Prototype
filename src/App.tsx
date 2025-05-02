@@ -4,10 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './context/AuthContext';
 import { MedicineProvider } from './context/MedicineContext';
 import { WaterProvider } from './context/WaterContext';
-import AppNavigator from './navigation/AppNavigator';
+import { NotificationProvider } from './context/NotificationContext';
 import { SymptomProvider } from 'context/SymptomContext';
 import { CalendarProvider } from 'context/CalendarContext';
 import stylesGlobal from './styles/styles-screen/StylesGlobal';
+import AppNavigator from './navigation/AppNavigator';
 import { FileService } from './services/FileService';
 
 const AppContent = () => {
@@ -40,15 +41,17 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <MedicineProvider>
-        <WaterProvider>
-          <SymptomProvider>
-            <CalendarProvider>
-              <AppContent />
-            </CalendarProvider>
-          </SymptomProvider>
-        </WaterProvider>
-      </MedicineProvider>
+      <NotificationProvider>
+        <MedicineProvider>
+            <WaterProvider>
+              <SymptomProvider>
+                <CalendarProvider>
+                <AppContent />
+              </CalendarProvider>
+            </SymptomProvider>
+          </WaterProvider>
+        </MedicineProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 };

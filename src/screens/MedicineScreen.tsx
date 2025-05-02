@@ -106,6 +106,7 @@ const MedicineScreen = ({ navigation }: any) => {
     <View style={stylesMedicineScreen.container}>
       <TopNavigationBar 
         title="Medicine"
+        navigation={navigation}
         onMenuPress={() => navigation.openDrawer()}
         onNotificationPress={() => console.log('Notification pressed')}
         onContactPress={() => console.log('Contact pressed')}
