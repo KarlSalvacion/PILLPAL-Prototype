@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import HomeScreen from '../screens/HomeScreen';
 import AddMedicineScreen from '../screens/AddMedicineScreen';
 import ContactScreen from '../screens/ContactScreen';
+import AddContactScreen from '../screens/AddContactScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
@@ -38,6 +39,7 @@ const AppNavigator = () => {
             }}
           />
           <Stack.Screen name="Contacts" component={ContactScreen} />
+          <Stack.Screen name="AddContact" component={AddContactScreen} />
           <Stack.Screen name="Notifications" component={NotificationScreen} />
         </>
       )}

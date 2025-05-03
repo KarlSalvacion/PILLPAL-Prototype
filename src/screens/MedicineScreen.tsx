@@ -2,16 +2,18 @@ import React from 'react';
 import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useMedicine } from '../context/MedicineContext';
+import { useNotification } from '../context/NotificationContext';
 import TopNavigationBar from '../components/TopNavigationBar';
 import stylesMedicineScreen from '../styles/styles-screen/StylesMedicineScreen';
 
 const MedicineScreen = ({ navigation }: any) => {
   const { medicines, markMedicineAsDone, deleteMedicine } = useMedicine();
+  const { markMedicineAsTaken } = useNotification();
   
   const activeMedicines = medicines.filter(medicine => medicine.isActive);
   const inactiveMedicines = medicines.filter(medicine => !medicine.isActive);
 
-  const handleMarkAsDone = async (id: string) => {
+  const handleMarkAsDone = async (id: string, notificationId?: string) => {
     Alert.alert(
       'Confirm',
       'Are you sure you want to mark this medicine as done?',
@@ -25,6 +27,9 @@ const MedicineScreen = ({ navigation }: any) => {
           onPress: async () => {
             try {
               await markMedicineAsDone(id);
+              if (notificationId) {
+                await markMedicineAsTaken(id, notificationId);
+              }
             } catch (error) {
               Alert.alert('Error', 'Failed to update medicine status');
             }
@@ -79,7 +84,7 @@ const MedicineScreen = ({ navigation }: any) => {
           <>
             <Pressable
               style={stylesMedicineScreen.checkButton}
-              onPress={() => handleMarkAsDone(medicine.id)}
+              onPress={() => handleMarkAsDone(medicine.id, medicine.notificationId)}
             >
               <MaterialCommunityIcons name="check" size={24} color="#177581" />
             </Pressable>
@@ -104,14 +109,6 @@ const MedicineScreen = ({ navigation }: any) => {
 
   return (
     <View style={stylesMedicineScreen.container}>
-      <TopNavigationBar 
-        title="Medicine"
-        navigation={navigation}
-        onMenuPress={() => navigation.openDrawer()}
-        onNotificationPress={() => console.log('Notification pressed')}
-        onContactPress={() => console.log('Contact pressed')}
-      />
-
       <ScrollView style={stylesMedicineScreen.scrollView}>
         <View style={stylesMedicineScreen.section}>
           <Text style={stylesMedicineScreen.sectionTitle}>Active Medicines</Text>
