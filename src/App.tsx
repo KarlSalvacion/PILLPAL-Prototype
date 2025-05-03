@@ -7,6 +7,7 @@ import { WaterProvider } from './context/WaterContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { SymptomProvider } from 'context/SymptomContext';
 import { CalendarProvider } from 'context/CalendarContext';
+import { ContactProvider } from './context/ContactContext';
 import stylesGlobal from './styles/styles-screen/StylesGlobal';
 import AppNavigator from './navigation/AppNavigator';
 import { FileService } from './services/FileService';
@@ -41,17 +42,19 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <NotificationProvider>
-        <MedicineProvider>
-            <WaterProvider>
-              <SymptomProvider>
-                <CalendarProvider>
-                <AppContent />
-              </CalendarProvider>
-            </SymptomProvider>
-          </WaterProvider>
-        </MedicineProvider>
-      </NotificationProvider>
+      <ContactProvider>
+        <NotificationProvider>
+          <MedicineProvider>
+              <WaterProvider>
+                <SymptomProvider>
+                  <CalendarProvider>
+                  <AppContent />
+                </CalendarProvider>
+              </SymptomProvider>
+            </WaterProvider>
+          </MedicineProvider>
+        </NotificationProvider>
+      </ContactProvider>
     </AuthProvider>
   );
 };

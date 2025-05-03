@@ -1,10 +1,11 @@
 export type RootStackParamList = {
+  SignIn: undefined;
+  SignUp: undefined;
   MainTabs: undefined;
   AddMedicine: undefined;
   Contacts: undefined;
+  AddContact: undefined;
   Notifications: undefined;
-  SignIn: undefined;
-  SignUp: undefined;
 };
 
 export type TabParamList = {

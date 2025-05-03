@@ -123,10 +123,7 @@ const WaterTrackerScreen = ({ navigation }: any) => {
 
   return (
     <View style={stylesWaterTracker.container}>
-      <TopNavigationBar 
-        title="Water Tracker"
-        navigation={navigation}
-      />
+
       <Text style={stylesWaterTracker.title}>Stay Hydrated</Text>
       <View style={stylesWaterTracker.toggleContainer}>
         <TouchableOpacity style={stylesWaterTracker.toggleButtonSelected}>
