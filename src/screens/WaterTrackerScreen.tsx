@@ -1,112 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Modal, TextInput, Alert } from 'react-native';
-import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TouchableOpacity, Modal, TextInput, Alert, ScrollView } from 'react-native';
+import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useWater } from '../context/WaterContext';
 import TopNavigationBar from '../components/TopNavigationBar';
 import stylesWaterTracker from '../styles/styles-screen/StylesWaterTrackerScreen';
 
-interface WaterTrackerData {
-  intakeVolume: number;
-  measurement: string;
-  totalGoal: number;
-  currentIntake: number;
-  lastResetDate: string;
-}
-
-const STORAGE_KEY = '@water_tracker_data';
-
 const WaterTrackerScreen = ({ navigation }: any) => {
-  const [currentIntake, setCurrentIntake] = useState(0);
-  const [totalGoal, setTotalGoal] = useState(2500);
+  const { 
+    currentIntake, 
+    totalGoal, 
+    intakeVolume, 
+    measurement, 
+    intakes,
+    addWaterIntake,
+    removeIntake,
+    setTotalGoal,
+    setIntakeVolume,
+    setMeasurement,
+    resetIntake
+  } = useWater();
+
   const [goalModalVisible, setGoalModalVisible] = useState(false);
   const [newGoal, setNewGoal] = useState(totalGoal.toString());
   const [isVolumeModalVisible, setVolumeModalVisible] = useState(false);
-  const [intakeVolume, setIntakeVolume] = useState(250);
-  const [measurement, setMeasurement] = useState('ml');
-  const [lastResetDate, setLastResetDate] = useState(new Date().toDateString());
-
-  // Load saved data on mount
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const savedData = await AsyncStorage.getItem(STORAGE_KEY);
-        const defaultData: WaterTrackerData = {
-          intakeVolume: 250,
-          measurement: 'ml',
-          totalGoal: 2500,
-          currentIntake: 0,
-          lastResetDate: new Date().toDateString()
-        };
-
-        if (savedData) {
-          const data = JSON.parse(savedData) as WaterTrackerData;
-          setIntakeVolume(data.intakeVolume);
-          setMeasurement(data.measurement);
-          setTotalGoal(data.totalGoal);
-          setCurrentIntake(data.currentIntake);
-          setLastResetDate(data.lastResetDate);
-
-          // Reset intake if it's a new day
-          const today = new Date().toDateString();
-          if (data.lastResetDate !== today) {
-            setCurrentIntake(0);
-            setLastResetDate(today);
-            await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({
-              ...data,
-              currentIntake: 0,
-              lastResetDate: today
-            }));
-          }
-        } else {
-          // Initialize with default values
-          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(defaultData));
-        }
-      } catch (error) {
-        console.error('Error loading water tracker data:', error);
-      }
-    };
-    loadData();
-  }, []);
-
-  // Save data when it changes
-  useEffect(() => {
-    const saveData = async () => {
-      try {
-        await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({
-          currentIntake,
-          totalGoal,
-          intakeVolume,
-          measurement,
-          lastResetDate
-        }));
-      } catch (error) {
-        console.error('Error saving water tracker data:', error);
-      }
-    };
-    saveData();
-  }, [currentIntake, totalGoal, intakeVolume, measurement, lastResetDate]);
-
-  const addWaterIntake = () => {
-    if (currentIntake + intakeVolume <= totalGoal) {
-      setCurrentIntake(currentIntake + intakeVolume);
-    }
-  };
-
-  const saveVolumeAndMeasurement = async () => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify({
-        intakeVolume,
-        measurement,
-        currentIntake,
-        totalGoal,
-        lastResetDate
-      }));
-      Alert.alert('Saved!', 'Your volume and measurement have been updated.');
-      setVolumeModalVisible(false);
-    } catch (error) {
-      console.error('Error saving volume and measurement:', error);
-    }
-  };
+  const [showTrends, setShowTrends] = useState(false);
 
   const handleVolumeChange = (value: string) => {
     const newVolume = parseInt(value) || 0;
@@ -121,37 +38,98 @@ const WaterTrackerScreen = ({ navigation }: any) => {
     setGoalModalVisible(false);
   };
 
+  const formatTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
+
+  const renderIntakeHistory = () => {
+    return intakes.map((intake) => (
+      <View key={intake.id} style={stylesWaterTracker.intakeItem}>
+        <View style={stylesWaterTracker.intakeInfo}>
+          <MaterialCommunityIcons name="cup-water" size={24} color="rgb(23, 117, 129)" />
+          <Text style={stylesWaterTracker.intakeAmount}>{intake.amount} {measurement}</Text>
+          <Text style={stylesWaterTracker.intakeTime}>{formatTime(intake.timestamp)}</Text>
+        </View>
+        <TouchableOpacity onPress={() => removeIntake(intake.id)}>
+          <AntDesign name="delete" size={20} color="rgb(23, 117, 129)" />
+        </TouchableOpacity>
+      </View>
+    ));
+  };
+
+  const handleReset = () => {
+    Alert.alert(
+      'Reset Water Intake',
+      'Are you sure you want to reset today\'s water intake?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            resetIntake();
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <View style={stylesWaterTracker.container}>
-
-      <Text style={stylesWaterTracker.title}>Stay Hydrated</Text>
       <View style={stylesWaterTracker.toggleContainer}>
-        <TouchableOpacity style={stylesWaterTracker.toggleButtonSelected}>
-          <Text style={stylesWaterTracker.trackerText}>Tracker</Text>
+        <TouchableOpacity 
+          style={[stylesWaterTracker.toggleButton, !showTrends && stylesWaterTracker.toggleButtonSelected]}
+          onPress={() => setShowTrends(false)}
+        >
+          <Text style={[stylesWaterTracker.toggleText, !showTrends && stylesWaterTracker.trackerText]}>
+            Tracker
+          </Text>
         </TouchableOpacity>
         
-        <TouchableOpacity style={stylesWaterTracker.toggleButton}>
-          <Text style={stylesWaterTracker.toggleText}>Trends</Text>
+        <TouchableOpacity 
+          style={[stylesWaterTracker.toggleButton, showTrends && stylesWaterTracker.toggleButtonSelected]}
+          onPress={() => setShowTrends(true)}
+        >
+          <Text style={[stylesWaterTracker.toggleText, showTrends && stylesWaterTracker.trackerText]}>
+            Trends
+          </Text>
         </TouchableOpacity>
       </View>
 
-      {/* Goal Card */}
-      <View style={stylesWaterTracker.goalCard}>
-        <Text style={stylesWaterTracker.goalTime}>11:00 AM</Text>
-        <Text style={stylesWaterTracker.goalDetails}>250ml water (1 Glass)</Text>
-        <TouchableOpacity style={stylesWaterTracker.addGoalButton} onPress={() => setGoalModalVisible(true)}>
-          <Text style={stylesWaterTracker.addGoalText}>Add Your Goal</Text>
-        </TouchableOpacity>
-      </View>
+      {!showTrends ? (
+        <>
+          {/* Water Intake Progress */}
+          <View style={stylesWaterTracker.waterTracker}>
+            <Text style={stylesWaterTracker.waterText}>{currentIntake} {measurement}</Text>
+            <Text style={stylesWaterTracker.goalText}>/ {totalGoal} {measurement}</Text>
+            <TouchableOpacity style={stylesWaterTracker.addButton} onPress={addWaterIntake}>
+              <Ionicons name="add" size={32} color="white" />
+            </TouchableOpacity>
+          </View>
 
-      {/* Water Intake Progress */}
-      <View style={stylesWaterTracker.waterTracker}>
-        <Text style={stylesWaterTracker.waterText}>{currentIntake} ml</Text>
-        <Text style={stylesWaterTracker.goalText}>/ {totalGoal} ml</Text>
-        <TouchableOpacity style={stylesWaterTracker.addButton} onPress={addWaterIntake}>
-          <Text style={stylesWaterTracker.addButtonText}>+</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Intake History */}
+          <ScrollView style={stylesWaterTracker.intakeHistory}>
+            <Text style={stylesWaterTracker.historyTitle}>Today's Intake History</Text>
+            {intakes.length > 0 ? (
+              renderIntakeHistory()
+            ) : (
+              <Text style={stylesWaterTracker.emptyHistoryText}>No water intake recorded today</Text>
+            )}
+          </ScrollView>
+        </>
+      ) : (
+        <View style={stylesWaterTracker.trendsContainer}>
+          <Text style={stylesWaterTracker.trendsTitle}>Weekly Progress</Text>
+          <Text style={stylesWaterTracker.comingSoonText}>Trends visualization coming soon!</Text>
+        </View>
+      )}
 
       {/* Bottom Controls */}
       <View style={stylesWaterTracker.bottomControls}>
@@ -174,6 +152,16 @@ const WaterTrackerScreen = ({ navigation }: any) => {
           </TouchableOpacity>
           <Text style={stylesWaterTracker.buttonText}>Change Volume</Text>
         </View>
+
+        <View style={stylesWaterTracker.buttonContainer}>
+          <TouchableOpacity 
+            style={stylesWaterTracker.iconButton} 
+            onPress={handleReset}
+          >
+            <MaterialCommunityIcons name="refresh" style={stylesWaterTracker.bottomControlsIcon} />
+          </TouchableOpacity>
+          <Text style={stylesWaterTracker.buttonText}>Reset</Text>
+        </View>
       </View>
 
       {/* Volume Modal */}
@@ -190,7 +178,10 @@ const WaterTrackerScreen = ({ navigation }: any) => {
             <TouchableOpacity onPress={() => setMeasurement(measurement === 'ml' ? 'oz' : 'ml')}>
               <Text style={stylesWaterTracker.modalButtonText}>{measurement.toUpperCase()}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={stylesWaterTracker.modalButton} onPress={saveVolumeAndMeasurement}>
+            <TouchableOpacity 
+              style={stylesWaterTracker.modalButton} 
+              onPress={() => setVolumeModalVisible(false)}
+            >
               <Text style={stylesWaterTracker.modalButtonText}>Save</Text>
             </TouchableOpacity>
           </View>

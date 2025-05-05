@@ -6,15 +6,22 @@ const stylesWaterTracker = StyleSheet.create({
     flex: 1, 
     alignItems: "center", 
     backgroundColor: "#f6f6f6", 
-
   },
 
+  header: {
+    backgroundColor: '#fff',
+    padding: 16,
+    width: '100%',
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+  },
+  
   // Titles and Text
   title: { 
     fontSize: 24, 
     fontWeight: "bold", 
-    marginVertical: 20, 
-    color: "#165c59" 
+    color: "#177581" 
   },
   trackerText: { 
     color: "rgb(255, 255, 255)", 
@@ -51,6 +58,7 @@ const stylesWaterTracker = StyleSheet.create({
   // Toggle Buttons
   toggleContainer: { 
     flexDirection: "row", 
+    marginTop: 40,
     marginBottom: 20 
   },
   toggleButton: { 
@@ -87,32 +95,41 @@ const stylesWaterTracker = StyleSheet.create({
   addButton: { 
     backgroundColor: "#165c59", 
     borderRadius: 50, 
-    padding: 10, 
-    marginTop: 10 
+    width: 50,
+    height: 50,
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   addButtonText: { 
     color: "#fff", 
-    fontSize: 30 
+    fontSize: 30,
+    textAlign: "center",
   },
 
   // Water Tracker
   waterTracker: { 
     alignItems: "center", 
+    justifyContent: "center",
+    marginTop: 40,
     marginBottom: 40 
   },
 
   // Bottom Controls
   bottomControls: {
+    gap: 10,
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "center",
     alignItems: "center",
     width: "100%",
     marginTop: 20,
+    marginBottom: 40,
   },
   
   buttonContainer: {
     alignItems: "center",
     justifyContent: "center",
+    minWidth: "30%",
   },
   
   iconButton: {
@@ -177,6 +194,77 @@ const stylesWaterTracker = StyleSheet.create({
   modalButtonText: { 
     color: "#fff", 
     fontWeight: "bold" 
+  },
+
+  // Intake History
+  intakeHistory: {
+    width: '100%',
+    paddingHorizontal: 20,
+    marginTop: 20,
+  },
+  historyTitle: {
+    alignSelf: 'center',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'rgb(23, 117, 129)',
+    marginBottom: 15,
+  },
+  intakeItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+    shadowColor: 'rgb(23, 117, 129)',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  intakeInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  intakeAmount: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: 'rgb(23, 117, 129)',
+  },
+  intakeTime: {
+    fontSize: 14,
+    color: 'rgb(92, 160, 167)',
+  },
+  emptyHistoryText: {
+    textAlign: 'center',
+    color: 'rgb(92, 160, 167)',
+    fontSize: 16,
+    marginTop: 20,
+  },
+
+  // Trends Section
+  trendsContainer: {
+    flex: 1,
+    width: '100%',
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  trendsTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: 'rgb(23, 117, 129)',
+    marginBottom: 20,
+  },
+  comingSoonText: {
+    fontSize: 16,
+    color: 'rgb(92, 160, 167)',
+    textAlign: 'center',
   },
 });
 

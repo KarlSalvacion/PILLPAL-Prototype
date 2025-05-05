@@ -9,6 +9,7 @@ import NotificationScreen from '../screens/NotificationScreen';
 import SignInScreen from '../screens/SignInScreen';
 import SignUpScreen from '../screens/SignUpScreen';
 import TabNavigator from './TabNavigator';
+import WaterTrackerScreen from '../screens/WaterTrackerScreen';
 import { RootStackParamList } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -41,6 +42,7 @@ const AppNavigator = () => {
           <Stack.Screen name="Contacts" component={ContactScreen} />
           <Stack.Screen name="AddContact" component={AddContactScreen} />
           <Stack.Screen name="Notifications" component={NotificationScreen} />
+          <Stack.Screen name="WaterTracker" component={WaterTrackerScreen} />
         </>
       )}
     </Stack.Navigator>
