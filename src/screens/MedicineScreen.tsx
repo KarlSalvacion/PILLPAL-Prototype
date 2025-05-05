@@ -109,6 +109,9 @@ const MedicineScreen = ({ navigation }: any) => {
 
   return (
     <View style={stylesMedicineScreen.container}>
+      <View style={stylesMedicineScreen.header}>
+        <Text style={stylesMedicineScreen.title}>Medicine Tracker</Text>
+      </View>
       <ScrollView style={stylesMedicineScreen.scrollView}>
         <View style={stylesMedicineScreen.section}>
           <Text style={stylesMedicineScreen.sectionTitle}>Active Medicines</Text>
@@ -124,7 +127,7 @@ const MedicineScreen = ({ navigation }: any) => {
         </View>
 
         <View style={stylesMedicineScreen.section}>
-          <Text style={stylesMedicineScreen.sectionTitle}>Inactive Medicines</Text>
+          <Text style={stylesMedicineScreen.sectionTitle}>Completed Medicines</Text>
           {inactiveMedicines.length > 0 ? (
             inactiveMedicines.map(medicine => renderMedicineBox(medicine, false))
           ) : (

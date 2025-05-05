@@ -5,6 +5,19 @@ const stylesMedicineScreen = StyleSheet.create({
         flex: 1,
         backgroundColor: '#F5F5F5',
       },
+      header: {
+        backgroundColor: '#fff',
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(0, 0, 0, 0.1)',
+      },
+      title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#177581',
+        textAlign: 'left',
+      },
+      
       scrollView: {
         flex: 1,
         padding: 16,

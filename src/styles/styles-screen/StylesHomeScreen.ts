@@ -13,6 +13,22 @@ const stylesHomeScreen = StyleSheet.create({
         height: 150,
         justifyContent: 'center',
         alignSelf: 'center',
+        overflow: 'hidden',
+    },
+    
+    calendarToggle: {
+        backgroundColor: 'rgb(23, 117, 129)',
+        padding: 8,
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgb(191, 214, 217)',
+        marginTop: -24,
+    },
+
+    calendarToggleIcon: {
+        color: 'rgb(247, 247, 247)',
+        fontSize: 24,
     },
     
     calendarArea: {
@@ -22,6 +38,7 @@ const stylesHomeScreen = StyleSheet.create({
         gap: 5,
         justifyContent: 'center',
         paddingHorizontal: 60,
+        paddingTop: 10,
     },
 
     calendarHeader: {
@@ -228,6 +245,212 @@ const stylesHomeScreen = StyleSheet.create({
     timeText: {
         fontSize: 16,
         color: 'rgb(244, 254, 255)',
+    },
+
+    // SYMPTOM SECTION
+    section: {
+        marginTop: 20,
+        paddingHorizontal: 20,
+        width: '100%',
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'rgb(23, 117, 129)',
+        marginBottom: 10,
+    },
+    symptomItem: {
+        backgroundColor: 'rgb(232, 201, 108)',
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 10,
+        shadowColor: 'rgb(23, 117, 129)',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    symptomHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+    },
+    symptomName: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: 'rgb(12, 66, 70)',
+        marginLeft: 10,
+    },
+    symptomTreatment: {
+        fontSize: 14,
+        color: 'rgb(12, 66, 70)',
+        marginBottom: 5,
+    },
+    symptomTime: {
+        fontSize: 12,
+        color: 'rgb(12, 66, 70)',
+    },
+    emptyState: {
+        alignItems: 'center',
+        padding: 20,
+    },
+    emptyStateText: {
+        fontSize: 14,
+        color: 'rgb(12, 66, 70)',
+        textAlign: 'center',
+    },
+
+    resolvedText: {
+        fontSize: 14,
+        color: 'rgb(12, 66, 70)',
+        marginLeft: 'auto',
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+    },
+
+    // WATER INTAKE SECTION
+    waterIntakeContainer: {
+        backgroundColor: 'rgb(46, 108, 173)',
+        borderRadius: 15,
+        padding: 15,
+        marginBottom: 10,
+        shadowColor: 'rgb(23, 117, 129)',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    waterIntakeContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+    },
+    waterIntakeLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+    },
+    waterIntakeRight: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+    },
+    waterIntakeInfo: {
+        marginLeft: 15,
+    },
+    waterIntakeText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: 'rgb(240, 240, 240)',
+    },
+    waterIntakeSubtext: {
+        fontSize: 14,
+        color: 'rgb(240, 240, 240)',
+        marginTop: 4,
+    },
+    waterProgressContainer: {
+        width: 100,
+        height: 6,
+        backgroundColor: 'rgba(240, 240, 240, 0.3)',
+        borderRadius: 3,
+        overflow: 'hidden',
+    },
+    waterProgressBar: {
+        height: '100%',
+        backgroundColor: 'rgb(240, 240, 240)',
+        borderRadius: 3,
+    },
+
+    // Empty Symptom State
+    emptySymptomContainer: {
+        backgroundColor: 'rgb(244, 254, 255)',
+        borderRadius: 15,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        shadowColor: 'rgb(23, 117, 129)',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    emptySymptomText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'rgb(23, 117, 129)',
+        marginTop: 10,
+        marginBottom: 5,
+    },
+    emptySymptomSubtext: {
+        fontSize: 14,
+        color: 'rgb(92, 160, 167)',
+        textAlign: 'center',
+        marginBottom: 15,
+    },
+    addSymptomButton: {
+        backgroundColor: 'rgb(23, 117, 129)',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        marginTop: 5,
+    },
+    addSymptomButtonText: {
+        color: 'rgb(244, 254, 255)',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+
+    // Empty Medicine State
+    emptyMedicineContainer: {
+        backgroundColor: 'rgb(244, 254, 255)',
+        borderRadius: 15,
+        padding: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+        shadowColor: 'rgb(23, 117, 129)',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 3,
+    },
+    emptyMedicineText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: 'rgb(23, 117, 129)',
+        marginTop: 10,
+        marginBottom: 5,
+    },
+    emptyMedicineSubtext: {
+        fontSize: 14,
+        color: 'rgb(92, 160, 167)',
+        textAlign: 'center',
+        marginBottom: 15,
+    },
+    addMedicineButton: {
+        backgroundColor: 'rgb(23, 117, 129)',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        marginTop: 5,
+    },
+    addMedicineButtonText: {
+        color: 'rgb(244, 254, 255)',
+        fontSize: 14,
+        fontWeight: '600',
     },
 });
 
