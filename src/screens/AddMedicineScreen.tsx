@@ -17,7 +17,11 @@ const AddMedicineScreen = ({ navigation }: any) => {
   const [intakeMode, setIntakeMode] = useState('oral');
   const [isDosageUnitModalVisible, setDosageUnitModalVisible] = useState(false);
   const [isIntakeModeModalVisible, setIntakeModeModalVisible] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(() => {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() + 1);
+    return now;
+  });
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
   const [intervalHours, setIntervalHours] = useState(0);
