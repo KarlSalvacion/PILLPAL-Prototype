@@ -3,8 +3,20 @@ import { StyleSheet } from "react-native";
 const stylesMedicineScreen = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#F5F5F5',
+        backgroundColor: '#fff',
       },
+      header: {
+        backgroundColor: '#fff',
+        padding: 16,
+
+      },
+      title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#177581',
+        textAlign: 'left',
+      },
+      
       scrollView: {
         flex: 1,
         padding: 16,
@@ -19,7 +31,7 @@ const stylesMedicineScreen = StyleSheet.create({
         marginBottom: 16,
       },
       medicineBox: {
-        backgroundColor: '#FFFFFF',
+        backgroundColor: 'rgb(255, 255, 255)',
         borderRadius: 12,
         padding: 16,
         marginBottom: 12,
@@ -31,7 +43,17 @@ const stylesMedicineScreen = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 3.84,
         elevation: 5,
+        borderWidth: 1,
+        borderColor: 'rgba(198, 198, 198, 0.4)',
       },
+
+      checkmarkContainer: {
+        position: 'absolute',
+        top: 16,
+        right: 16,
+        zIndex: 1,
+      },
+      
       medicineHeader: {
         flexDirection: 'row',
         alignItems: 'center',

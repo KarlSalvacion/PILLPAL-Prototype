@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const stylesNotification = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -33,6 +33,8 @@ const stylesNotification = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     elevation: 2,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.2,

@@ -7,8 +7,9 @@ const stylesTabNavigator = StyleSheet.create({
         flexDirection: 'row',  
         paddingTop: 25, 
         height: 80,
-        backgroundColor: '#E9F6FE',
-        borderTopWidth: 0,
+        backgroundColor: 'rgb(244, 254, 255)',
+        borderTopWidth: 1,
+        borderTopColor: 'rgba(198, 198, 198, 0.4)',
     },
     tabBarItemStyle: {
         padding: 0,

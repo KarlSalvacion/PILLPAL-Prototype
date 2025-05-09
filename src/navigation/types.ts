@@ -6,6 +6,7 @@ export type RootStackParamList = {
   Contacts: undefined;
   AddContact: undefined;
   Notifications: undefined;
+  WaterTracker: undefined;
 };
 
 export type TabParamList = {

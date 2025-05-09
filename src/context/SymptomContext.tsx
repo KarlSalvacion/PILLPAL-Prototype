@@ -7,6 +7,7 @@ interface TrackedSymptom {
   name: string;
   isChecked: boolean;
   treatment?: string;
+  timestamp: string;
 }
 
 interface SymptomContextType {
@@ -52,7 +53,8 @@ export const SymptomProvider: React.FC<{ children: React.ReactNode }> = ({ child
         id,
         name: symptom?.name || '',
         isChecked: false,
-        treatment: symptom?.treatment
+        treatment: symptom?.treatment,
+        timestamp: new Date().toISOString()
       };
     });
 

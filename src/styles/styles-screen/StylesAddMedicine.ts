@@ -3,7 +3,6 @@ import { StyleSheet } from 'react-native';
 const stylesAddMedicine = StyleSheet.create({
   container: {
     flex: 1,
-
     backgroundColor: '#fff',
   },
   header: {
