@@ -1,16 +1,16 @@
-import React, { useEffect } from 'react';
-import { StatusBar, SafeAreaView } from 'react-native'
-import { NavigationContainer } from '@react-navigation/native';
-import { AuthProvider } from './context/AuthContext';
-import { MedicineProvider } from './context/MedicineContext';
-import { WaterProvider } from './context/WaterContext';
-import { NotificationProvider } from './context/NotificationContext';
-import { SymptomProvider } from 'context/SymptomContext';
-import { CalendarProvider } from 'context/CalendarContext';
-import { ContactProvider } from './context/ContactContext';
-import stylesGlobal from './styles/styles-screen/StylesGlobal';
-import AppNavigator from './navigation/AppNavigator';
-import { FileService } from './services/FileService';
+import { NavigationContainer } from "@react-navigation/native";
+import React, { useEffect } from "react";
+import { SafeAreaView, StatusBar } from "react-native";
+import { AuthProvider } from "./context/AuthContext";
+import { CalendarProvider } from "./context/CalendarContext";
+import { ContactProvider } from "./context/ContactContext";
+import { MedicineProvider } from "./context/MedicineContext";
+import { NotificationProvider } from "./context/NotificationContext";
+import { SymptomProvider } from "./context/SymptomContext";
+import { WaterProvider } from "./context/WaterContext";
+import AppNavigator from "./navigation/AppNavigator";
+import { FileService } from "./services/FileService";
+import stylesGlobal from "./styles/styles-screen/StylesGlobal";
 
 const AppContent = () => {
   return (
@@ -33,7 +33,7 @@ const App = () => {
       try {
         await FileService.initialize();
       } catch (error) {
-        console.error('Error initializing app:', error);
+        console.error("Error initializing app:", error);
       }
     };
 
@@ -45,9 +45,9 @@ const App = () => {
       <ContactProvider>
         <NotificationProvider>
           <MedicineProvider>
-              <WaterProvider>
-                <SymptomProvider>
-                  <CalendarProvider>
+            <WaterProvider>
+              <SymptomProvider>
+                <CalendarProvider>
                   <AppContent />
                 </CalendarProvider>
               </SymptomProvider>
