@@ -45,6 +45,7 @@ const SymptomTrackerScreen = ({ navigation }: any) => {
         },
         {
           text: 'Confirm',
+          style: 'default',
           onPress: () => toggleSymptom(id),
         },
       ],
@@ -79,7 +80,7 @@ const SymptomTrackerScreen = ({ navigation }: any) => {
               style={stylesSymptomTracker.deleteButton}
               onPress={() => handleDeleteSymptom(symptom.id)}
             >
-              <MaterialCommunityIcons name="trash-can" size={24} color="#177581" />
+              <MaterialCommunityIcons name="trash-can" size={24} color="rgb(190, 60, 51)" />
             </Pressable>
           </>
         ) : (
@@ -132,7 +133,7 @@ const SymptomTrackerScreen = ({ navigation }: any) => {
         style={stylesSymptomTracker.addButton}
         onPress={() => setIsModalVisible(true)}
       >
-        <MaterialCommunityIcons name="plus" size={24} color="#fff" />
+        <Text style={stylesSymptomTracker.addButtonText}>Add Symptom</Text>
       </Pressable>
 
       <AddSymptomModal

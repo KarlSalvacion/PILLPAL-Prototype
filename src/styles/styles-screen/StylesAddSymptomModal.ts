@@ -4,14 +4,35 @@ const stylesAddSymptomModal = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(90, 90, 90, 0.5)',
+  },
+  modalOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+  blurView: {
+    flex: 1,
   },
   modalContent: {
     backgroundColor: '#fff',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
+    minHeight: '70%',
     maxHeight: '80%',
+  },
+  indicatorContainer: {
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  indicator: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#ccc',
+    borderRadius: 2,
   },
   modalHeader: {
     flexDirection: 'row',

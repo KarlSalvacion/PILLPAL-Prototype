@@ -76,7 +76,7 @@ const SignUpScreen = ({ navigation }: any) => {
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <>
                 <View style={stylesSignUp.inputGroup}>
-                  <Text style={stylesSignUp.label}>Name</Text>
+                  <Text style={stylesSignUp.label}>Username</Text>
                   <TextInput
                     style={stylesSignUp.input}
                     placeholder="Enter your name"

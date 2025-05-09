@@ -3,38 +3,48 @@ import { View, Text, TouchableOpacity, Modal, TextInput, Alert, ScrollView } fro
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useWater } from '../context/WaterContext';
 import TopNavigationBar from '../components/TopNavigationBar';
+import WaterLevelIndicator from '../components/WaterLevelIndicator';
 import stylesWaterTracker from '../styles/styles-screen/StylesWaterTrackerScreen';
 
 const WaterTrackerScreen = ({ navigation }: any) => {
   const { 
-    currentIntake, 
-    totalGoal, 
-    intakeVolume, 
-    measurement, 
+    currentIntake,
+    totalGoal,
+    intakeVolume,
     intakes,
     addWaterIntake,
     removeIntake,
     setTotalGoal,
     setIntakeVolume,
-    setMeasurement,
-    resetIntake
+    resetIntake,
+    setCurrentIntake,
+    setIntakes
   } = useWater();
 
-  const [goalModalVisible, setGoalModalVisible] = useState(false);
-  const [newGoal, setNewGoal] = useState(totalGoal.toString());
+  const [isGoalModalVisible, setGoalModalVisible] = useState(false);
   const [isVolumeModalVisible, setVolumeModalVisible] = useState(false);
-  const [showTrends, setShowTrends] = useState(false);
+  const [activeTab, setActiveTab] = useState('tracker'); // 'tracker', 'history', 'trends'
+  const [newGoal, setNewGoal] = useState(totalGoal.toString());
+  const [volumeInput, setVolumeInput] = useState(intakeVolume.toString());
 
   const handleVolumeChange = (value: string) => {
-    const newVolume = parseInt(value) || 0;
-    setIntakeVolume(newVolume);
+    // Allow empty string for better UX when backspacing
+    if (value === '') {
+      setVolumeInput('');
+      setIntakeVolume(0);
+      return;
+    }
+    
+    const numValue = parseInt(value);
+    if (!isNaN(numValue)) {
+      setVolumeInput(value);
+      setIntakeVolume(numValue);
+    }
   };
 
   const handleSetGoal = () => {
-    const parsedGoal = parseInt(newGoal);
-    if (!isNaN(parsedGoal) && parsedGoal > 0) {
-      setTotalGoal(parsedGoal);
-    }
+    const goalValue = parseInt(newGoal) || 0;
+    setTotalGoal(goalValue);
     setGoalModalVisible(false);
   };
 
@@ -46,15 +56,32 @@ const WaterTrackerScreen = ({ navigation }: any) => {
     });
   };
 
+  const handleDeletePress = (id: string) => {
+    Alert.alert(
+      'Delete Intake',
+      'Are you sure you want to delete this water intake?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => removeIntake(id),
+        },
+      ],
+    );
+  };
+
   const renderIntakeHistory = () => {
     return intakes.map((intake) => (
       <View key={intake.id} style={stylesWaterTracker.intakeItem}>
         <View style={stylesWaterTracker.intakeInfo}>
-          <MaterialCommunityIcons name="cup-water" size={24} color="rgb(23, 117, 129)" />
-          <Text style={stylesWaterTracker.intakeAmount}>{intake.amount} {measurement}</Text>
+          <Text style={stylesWaterTracker.intakeAmount}>{intake.amount} ml</Text>
           <Text style={stylesWaterTracker.intakeTime}>{formatTime(intake.timestamp)}</Text>
         </View>
-        <TouchableOpacity onPress={() => removeIntake(intake.id)}>
+        <TouchableOpacity onPress={() => handleDeletePress(intake.id)}>
           <AntDesign name="delete" size={20} color="rgb(23, 117, 129)" />
         </TouchableOpacity>
       </View>
@@ -81,41 +108,29 @@ const WaterTrackerScreen = ({ navigation }: any) => {
     );
   };
 
-  return (
-    <View style={stylesWaterTracker.container}>
-      <View style={stylesWaterTracker.toggleContainer}>
-        <TouchableOpacity 
-          style={[stylesWaterTracker.toggleButton, !showTrends && stylesWaterTracker.toggleButtonSelected]}
-          onPress={() => setShowTrends(false)}
-        >
-          <Text style={[stylesWaterTracker.toggleText, !showTrends && stylesWaterTracker.trackerText]}>
-            Tracker
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[stylesWaterTracker.toggleButton, showTrends && stylesWaterTracker.toggleButtonSelected]}
-          onPress={() => setShowTrends(true)}
-        >
-          <Text style={[stylesWaterTracker.toggleText, showTrends && stylesWaterTracker.trackerText]}>
-            Trends
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {!showTrends ? (
-        <>
-          {/* Water Intake Progress */}
-          <View style={stylesWaterTracker.waterTracker}>
-            <Text style={stylesWaterTracker.waterText}>{currentIntake} {measurement}</Text>
-            <Text style={stylesWaterTracker.goalText}>/ {totalGoal} {measurement}</Text>
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'tracker':
+        return (
+          <View style={stylesWaterTracker.trackerContent}>
+            <WaterLevelIndicator
+              currentIntake={currentIntake}
+              totalGoal={totalGoal}
+              size={220}
+              style={stylesWaterTracker.centeredWaterLevel}
+            />
+            <View style={stylesWaterTracker.waterTextContainer}>
+              <Text style={stylesWaterTracker.waterText}>{currentIntake} ml</Text>
+              <Text style={stylesWaterTracker.goalText}>/ {totalGoal} ml</Text>
+            </View>
             <TouchableOpacity style={stylesWaterTracker.addButton} onPress={addWaterIntake}>
               <Ionicons name="add" size={32} color="white" />
             </TouchableOpacity>
           </View>
-
-          {/* Intake History */}
-          <ScrollView style={stylesWaterTracker.intakeHistory}>
+        );
+      case 'history':
+        return (
+          <ScrollView style={stylesWaterTracker.intakeHistory} showsVerticalScrollIndicator={false}>
             <Text style={stylesWaterTracker.historyTitle}>Today's Intake History</Text>
             {intakes.length > 0 ? (
               renderIntakeHistory()
@@ -123,93 +138,191 @@ const WaterTrackerScreen = ({ navigation }: any) => {
               <Text style={stylesWaterTracker.emptyHistoryText}>No water intake recorded today</Text>
             )}
           </ScrollView>
-        </>
-      ) : (
-        <View style={stylesWaterTracker.trendsContainer}>
-          <Text style={stylesWaterTracker.trendsTitle}>Weekly Progress</Text>
-          <Text style={stylesWaterTracker.comingSoonText}>Trends visualization coming soon!</Text>
-        </View>
-      )}
+        );
+      case 'trends':
+        return (
+          <View style={stylesWaterTracker.trendsContainer}>
+            <Text style={stylesWaterTracker.trendsTitle}>Weekly Progress</Text>
+            <Text style={stylesWaterTracker.comingSoonText}>Trends visualization coming soon!</Text>
+          </View>
+        );
+    }
+  };
 
-      {/* Bottom Controls */}
-      <View style={stylesWaterTracker.bottomControls}>
-        <View style={stylesWaterTracker.buttonContainer}>
-          <TouchableOpacity 
-            style={stylesWaterTracker.iconButton} 
-            onPress={() => setGoalModalVisible(true)}
-          >
-            <AntDesign name="star" style={stylesWaterTracker.bottomControlsIcon} />
-          </TouchableOpacity>
-          <Text style={stylesWaterTracker.buttonText}>Change Goal</Text>
-        </View>
+  const renderVolumeModal = () => (
+    <Modal
+      visible={isVolumeModalVisible}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setVolumeModalVisible(false)}
+    >
+      <TouchableOpacity 
+        style={stylesWaterTracker.modalContainer}
+        activeOpacity={1}
+        onPress={() => setVolumeModalVisible(false)}
+      >
+        <TouchableOpacity 
+          activeOpacity={1}
+          style={stylesWaterTracker.modalContent}
+          onPress={e => e.stopPropagation()}
+        >
+          <Text style={stylesWaterTracker.modalTitle}>Volume per Intake</Text>
 
-        <View style={stylesWaterTracker.buttonContainer}>
-          <TouchableOpacity 
-            style={stylesWaterTracker.iconButton} 
-            onPress={() => setVolumeModalVisible(true)}
-          >
-            <MaterialCommunityIcons name="cup-water" style={stylesWaterTracker.bottomControlsIcon} />
-          </TouchableOpacity>
-          <Text style={stylesWaterTracker.buttonText}>Change Volume</Text>
-        </View>
+          <TextInput
+            style={stylesWaterTracker.goalInput}
+            keyboardType="numeric"
+            value={volumeInput}
+            onChangeText={handleVolumeChange}
+            placeholder="Enter volume"
+            placeholderTextColor="#a0a0a0"
+          />
 
-        <View style={stylesWaterTracker.buttonContainer}>
-          <TouchableOpacity 
-            style={stylesWaterTracker.iconButton} 
-            onPress={handleReset}
-          >
-            <MaterialCommunityIcons name="refresh" style={stylesWaterTracker.bottomControlsIcon} />
-          </TouchableOpacity>
-          <Text style={stylesWaterTracker.buttonText}>Reset</Text>
-        </View>
-      </View>
-
-      {/* Volume Modal */}
-      <Modal transparent={true} visible={isVolumeModalVisible} animationType="slide">
-        <View style={stylesWaterTracker.modalContainer}>
-          <View style={stylesWaterTracker.modalContent}>
-            <Text style={stylesWaterTracker.modalTitle}>Volume per Intake</Text>
-            <TextInput
-              style={stylesWaterTracker.goalInput}
-              keyboardType="numeric"
-              value={intakeVolume.toString()}
-              onChangeText={handleVolumeChange}
-            />
-            <TouchableOpacity onPress={() => setMeasurement(measurement === 'ml' ? 'oz' : 'ml')}>
-              <Text style={stylesWaterTracker.modalButtonText}>{measurement.toUpperCase()}</Text>
+          <View style={stylesWaterTracker.modalButtons}>
+            <TouchableOpacity
+              style={[stylesWaterTracker.modalButton, { backgroundColor: '#e0e0e0' }]}
+              onPress={() => {
+                setVolumeInput(intakeVolume.toString());
+                setVolumeModalVisible(false);
+              }}
+            >
+              <Text style={[stylesWaterTracker.modalButtonText, { color: '#666' }]}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={stylesWaterTracker.modalButton} 
-              onPress={() => setVolumeModalVisible(false)}
+            <TouchableOpacity
+              style={stylesWaterTracker.modalButton}
+              onPress={() => {
+                setVolumeModalVisible(false);
+              }}
             >
               <Text style={stylesWaterTracker.modalButtonText}>Save</Text>
             </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
 
-      {/* Goal Modal */}
-      <Modal transparent={true} visible={goalModalVisible} animationType="slide">
-        <View style={stylesWaterTracker.modalContainer}>
-          <View style={stylesWaterTracker.modalContent}>
-            <Text style={stylesWaterTracker.modalTitle}>Water Intake Goal</Text>
-            <TextInput
-              style={stylesWaterTracker.goalInput}
-              keyboardType="numeric"
-              value={newGoal}
-              onChangeText={setNewGoal}
-            />
-            <View style={stylesWaterTracker.modalButtons}>
-              <TouchableOpacity style={stylesWaterTracker.modalButton} onPress={() => setGoalModalVisible(false)}>
-                <Text style={stylesWaterTracker.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={stylesWaterTracker.modalButton} onPress={handleSetGoal}>
-                <Text style={stylesWaterTracker.modalButtonText}>Set Goal</Text>
-              </TouchableOpacity>
-            </View>
+  const renderGoalModal = () => (
+    <Modal
+      visible={isGoalModalVisible}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setGoalModalVisible(false)}
+    >
+      <TouchableOpacity 
+        style={stylesWaterTracker.modalContainer}
+        activeOpacity={1}
+        onPress={() => setGoalModalVisible(false)}
+      >
+        <TouchableOpacity 
+          activeOpacity={1}
+          style={stylesWaterTracker.modalContent}
+          onPress={e => e.stopPropagation()}
+        >
+          <Text style={stylesWaterTracker.modalTitle}>Set Daily Goal</Text>
+          <TextInput
+            style={stylesWaterTracker.goalInput}
+            keyboardType="numeric"
+            value={newGoal}
+            onChangeText={setNewGoal}
+            placeholder="Enter goal"
+            placeholderTextColor="#a0a0a0"
+          />
+          <View style={stylesWaterTracker.modalButtons}>
+            <TouchableOpacity
+              style={[stylesWaterTracker.modalButton, { backgroundColor: '#e0e0e0' }]}
+              onPress={() => setGoalModalVisible(false)}
+            >
+              <Text style={[stylesWaterTracker.modalButtonText, { color: '#666' }]}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={stylesWaterTracker.modalButton}
+              onPress={handleSetGoal}
+            >
+              <Text style={[stylesWaterTracker.modalButtonText]}>Set Goal</Text>
+            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
+        </TouchableOpacity>
+      </TouchableOpacity>
+    </Modal>
+  );
+
+  return (
+    <View style={stylesWaterTracker.container}>  
+      <View style={stylesWaterTracker.toggleContainer}>
+        <TouchableOpacity
+          style={[
+            stylesWaterTracker.toggleButton,
+            activeTab === 'tracker' && stylesWaterTracker.toggleButtonSelected
+          ]}
+          onPress={() => setActiveTab('tracker')}
+        >
+          <Text style={[
+            stylesWaterTracker.toggleText,
+            activeTab === 'tracker' && { color: 'white' }
+          ]}>Tracker</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            stylesWaterTracker.toggleButton,
+            activeTab === 'history' && stylesWaterTracker.toggleButtonSelected
+          ]}
+          onPress={() => setActiveTab('history')}
+        >
+          <Text style={[
+            stylesWaterTracker.toggleText,
+            activeTab === 'history' && { color: 'white' }
+          ]}>History</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[
+            stylesWaterTracker.toggleButton,
+            activeTab === 'trends' && stylesWaterTracker.toggleButtonSelected
+          ]}
+          onPress={() => setActiveTab('trends')}
+        >
+          <Text style={[
+            stylesWaterTracker.toggleText,
+            activeTab === 'trends' && { color: 'white' }
+          ]}>Trends</Text>
+        </TouchableOpacity>
+      </View>
+
+      {renderContent()}
+
+      <View style={stylesWaterTracker.bottomControls}>
+        <TouchableOpacity 
+          style={stylesWaterTracker.buttonContainer}
+          onPress={() => setVolumeModalVisible(true)}
+        >
+          <View style={stylesWaterTracker.iconButton}>
+            <MaterialCommunityIcons name="cup-water" size={24} style={stylesWaterTracker.bottomControlsIcon} />
+          </View>
+          <Text style={stylesWaterTracker.buttonText}>Volume</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={stylesWaterTracker.buttonContainer}
+          onPress={() => setGoalModalVisible(true)}
+        >
+          <View style={stylesWaterTracker.iconButton}>
+            <MaterialCommunityIcons name="target" size={24} style={stylesWaterTracker.bottomControlsIcon} />
+          </View>
+          <Text style={stylesWaterTracker.buttonText}>Goal</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity 
+          style={stylesWaterTracker.buttonContainer}
+          onPress={handleReset}
+        >
+          <View style={stylesWaterTracker.iconButton}>
+            <MaterialCommunityIcons name="refresh" size={24} style={stylesWaterTracker.bottomControlsIcon} />
+          </View>
+          <Text style={stylesWaterTracker.buttonText}>Reset</Text>
+        </TouchableOpacity>
+      </View>
+
+      {renderVolumeModal()}
+      {renderGoalModal()}
     </View>
   );
 };

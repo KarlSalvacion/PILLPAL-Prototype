@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 const stylesAddContact = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#ffffff',
   },
   header: {
     flexDirection: 'row',
@@ -21,6 +21,7 @@ const stylesAddContact = StyleSheet.create({
   },
   content: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
     padding: 16,
   },
   formGroup: {
