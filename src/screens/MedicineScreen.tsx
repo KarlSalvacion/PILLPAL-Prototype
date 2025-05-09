@@ -65,11 +65,18 @@ const MedicineScreen = ({ navigation }: any) => {
 
   const renderMedicineBox = (medicine: any, isActive: boolean) => (
     <View key={medicine.id} style={stylesMedicineScreen.medicineBox}>
+      {/* Checkmark for Completed Medicines */}
+      {!isActive && (
+        <View style={stylesMedicineScreen.checkmarkContainer}>
+          <MaterialCommunityIcons name="check-circle" size={24} color="#177581" />
+        </View>
+      )}
+
       <View style={stylesMedicineScreen.medicineHeader}>
         <MaterialCommunityIcons name="pill" size={24} color="#177581" />
         <Text style={stylesMedicineScreen.medicineName}>{medicine.name}</Text>
       </View>
-      
+
       <View style={stylesMedicineScreen.medicineDetails}>
         <Text style={stylesMedicineScreen.detailText}>
           Dosage: {medicine.dosage}
@@ -92,7 +99,7 @@ const MedicineScreen = ({ navigation }: any) => {
               style={stylesMedicineScreen.deleteButton}
               onPress={() => handleDelete(medicine.id)}
             >
-              <MaterialCommunityIcons name="trash-can" size={24} color="#177581" />
+              <MaterialCommunityIcons name="trash-can" size={24} color="rgb(190, 60, 51)" />
             </Pressable>
           </>
         ) : (
@@ -105,6 +112,7 @@ const MedicineScreen = ({ navigation }: any) => {
         )}
       </View>
     </View>
+
   );
 
   return (

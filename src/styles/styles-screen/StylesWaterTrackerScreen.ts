@@ -5,7 +5,7 @@ const stylesWaterTracker = StyleSheet.create({
   container: { 
     flex: 1, 
     alignItems: "center", 
-    backgroundColor: "#f6f6f6", 
+    backgroundColor: "#fff", 
   },
 
   header: {
@@ -16,7 +16,7 @@ const stylesWaterTracker = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.1)',
   },
-  
+
   // Titles and Text
   title: { 
     fontSize: 24, 
@@ -36,15 +36,6 @@ const stylesWaterTracker = StyleSheet.create({
     color: "#6c6c6c", 
     marginBottom: 10 
   },
-  waterText: { 
-    fontSize: 48, 
-    color: "#165c59", 
-    fontWeight: "bold" 
-  },
-  goalText: { 
-    fontSize: 18, 
-    color: "#6c6c6c" 
-  },
 
   // Goal Card
   goalCard: { 
@@ -55,35 +46,57 @@ const stylesWaterTracker = StyleSheet.create({
     marginBottom: 20 
   },
 
+  // Tracker Content
+  trackerContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 40,
+  },
+  centeredWaterLevel: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  waterTextContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  waterText: { 
+    fontSize: 48, 
+    color: "rgb(23, 117, 129)", 
+    fontWeight: "bold" 
+  },
+  goalText: { 
+    fontSize: 18, 
+    color: "#6c6c6c" 
+  },
+
   // Toggle Buttons
   toggleContainer: { 
     flexDirection: "row", 
     marginTop: 40,
-    marginBottom: 20 
+    marginBottom: 20,
+    justifyContent: 'center',
+    gap: 10,
   },
   toggleButton: { 
     paddingVertical: 8, 
     paddingHorizontal: 20, 
     borderRadius: 20, 
     borderWidth: 1, 
-    borderColor: "#165c59", 
-    marginHorizontal: 5 
+    borderColor: "rgb(23, 117, 129)", 
   },
   toggleButtonSelected: { 
-    backgroundColor: "#165c59", 
-    paddingVertical: 8, 
-    paddingHorizontal: 20, 
-    borderRadius: 20, 
-    marginHorizontal: 5 
+    backgroundColor: "rgb(23, 117, 129)", 
   },
   toggleText: { 
-    color: "#165c59", 
+    color: "rgb(23, 117, 129)", 
     fontWeight: "bold" 
   },
 
   // Buttons
   addGoalButton: { 
-    backgroundColor: "#165c59", 
+    backgroundColor: "rgb(23, 117, 129)", 
     paddingVertical: 10, 
     paddingHorizontal: 30, 
     borderRadius: 20 
@@ -93,7 +106,7 @@ const stylesWaterTracker = StyleSheet.create({
     fontWeight: "bold" 
   },
   addButton: { 
-    backgroundColor: "#165c59", 
+    backgroundColor: "rgb(23, 117, 129)", 
     borderRadius: 50, 
     width: 50,
     height: 50,
@@ -111,8 +124,9 @@ const stylesWaterTracker = StyleSheet.create({
   waterTracker: { 
     alignItems: "center", 
     justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 40 
+    marginTop: 20,
+    marginBottom: 20,
+    gap: 10,
   },
 
   // Bottom Controls
@@ -121,7 +135,7 @@ const stylesWaterTracker = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-    width: "100%",
+    width: "100%",  
     marginTop: 20,
     marginBottom: 40,
   },
@@ -157,50 +171,95 @@ const stylesWaterTracker = StyleSheet.create({
     flex: 1, 
     justifyContent: "center", 
     alignItems: "center", 
-    backgroundColor: "rgba(0, 0, 0, 0.5)" 
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: { 
     backgroundColor: "#fff", 
-    padding: 20, 
-    borderRadius: 10, 
-    width: "80%", 
-    alignItems: "center" 
+    padding: 24, 
+    borderRadius: 20, 
+    width: "85%", 
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
   modalTitle: { 
-    fontSize: 20, 
+    fontSize: 22, 
     fontWeight: "bold", 
-    marginBottom: 10 
+    marginBottom: 20,
+    color: "#165c59",
+  },
+  modalText: {
+    fontSize: 16,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 20,
   },
   goalInput: { 
-    borderBottomWidth: 1, 
-    width: "60%", 
+    borderWidth: 2,
+    borderColor: "#165c59",
+    borderRadius: 12,
+    width: "70%", 
     marginBottom: 20, 
     textAlign: "center", 
-    fontSize: 24 
+    fontSize: 28,
+    paddingVertical: 12,
+    color: "#165c59",
   },
-
+  measurementToggle: {
+    flexDirection: 'row',
+    backgroundColor: '#f0f9f9',
+    borderRadius: 12,
+    padding: 4,
+    marginBottom: 24,
+  },
+  measurementButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  measurementButtonSelected: {
+    backgroundColor: '#165c59',
+  },
+  measurementText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#165c59',
+  },
+  measurementTextSelected: {
+    color: '#fff',
+  },
   modalButtons: { 
     flexDirection: "row", 
     justifyContent: "space-around", 
-    width: "100%" 
+    width: "100%",
+    marginTop: 10,
   },
   modalButton: { 
-    paddingVertical: 10, 
-    paddingHorizontal: 20, 
+    paddingVertical: 12, 
+    paddingHorizontal: 24, 
     backgroundColor: "#165c59", 
-    borderRadius: 10, 
-    marginHorizontal: 5 
+    borderRadius: 12, 
+    marginHorizontal: 8,
+    minWidth: 100,
+    alignItems: 'center',
   },
   modalButtonText: { 
-    color: "#fff", 
-    fontWeight: "bold" 
+    color: "white", 
+    fontWeight: "bold",
+    fontSize: 16,
   },
 
   // Intake History
   intakeHistory: {
     width: '100%',
     paddingHorizontal: 20,
-    marginTop: 20,
+    marginTop: 0,
   },
   historyTitle: {
     alignSelf: 'center',
@@ -225,6 +284,8 @@ const stylesWaterTracker = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(198, 198, 198, 0.4)',
   },
   intakeInfo: {
     flexDirection: 'row',

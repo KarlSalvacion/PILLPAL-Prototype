@@ -13,7 +13,7 @@ const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const HomeScreen = ({ navigation }: any) => {
   const { medicines } = useMedicine();
   const { trackedSymptoms } = useSymptoms();
-  const { currentIntake, totalGoal, measurement, intakes } = useWater();
+  const { currentIntake, totalGoal, intakes } = useWater();
   const { date, selectedDay, handleNextDay, handlePrevDay, handleDayClick, formatSelectedDate } = useCalendar();
   const today = new Date();
   const [isCalendarExpanded, setIsCalendarExpanded] = useState(true);
@@ -52,7 +52,7 @@ const HomeScreen = ({ navigation }: any) => {
               <MaterialCommunityIcons name="cup-water" size={32} color="rgb(240, 240, 240)" />
               <View style={stylesHomeScreen.waterIntakeInfo}>
                 <Text style={stylesHomeScreen.waterIntakeText}>
-                  {currentIntake} / {totalGoal} {measurement}
+                  {currentIntake} / {totalGoal}
                 </Text>
                 <Text style={stylesHomeScreen.waterIntakeSubtext}>
                   {Math.round((currentIntake / totalGoal) * 100)}% of daily goal
@@ -74,7 +74,7 @@ const HomeScreen = ({ navigation }: any) => {
         </TouchableOpacity>
       </View>
     );
-  }, [currentIntake, totalGoal, measurement, navigation, selectedDay, today]);
+  }, [currentIntake, totalGoal, navigation, selectedDay, today]);
 
   const getMedicinesForSelectedDay = () => {
     if (!selectedDay) return [];
@@ -216,7 +216,7 @@ const HomeScreen = ({ navigation }: any) => {
           <View style={stylesHomeScreen.horizontalLine}/>
         </View>
 
-        <ScrollView style={stylesHomeScreen.medicineScrollView}>
+        <ScrollView style={stylesHomeScreen.medicineScrollView} showsVerticalScrollIndicator={false}>
           {selectedDayMedicines.length > 0 ? (
             <>
               <View style={stylesHomeScreen.medicineTextContainer}>
@@ -292,14 +292,15 @@ const HomeScreen = ({ navigation }: any) => {
                   onPress={() => navigation.navigate('Symptoms')}
                 >
                   <View style={stylesHomeScreen.symptomHeader}>
-                    {symptom.isChecked ? (
-                      <MaterialCommunityIcons name="check-circle" size={24} color="rgb(12, 66, 70)" />
-                    ) : (
-                      <MaterialCommunityIcons name="alert-circle" size={24} color="rgb(12, 66, 70)" />
-                    )}
-                    <Text style={stylesHomeScreen.symptomName}>{symptom.name}</Text>
                     {symptom.isChecked && (
-                      <Text style={stylesHomeScreen.resolvedText}>Resolved</Text>
+                      <>
+                        <MaterialCommunityIcons name="check-circle" size={24} color="rgb(12, 66, 70)" />
+                        <Text style={stylesHomeScreen.symptomName}>{symptom.name}</Text>
+                        <Text style={stylesHomeScreen.resolvedText}>Resolved</Text>
+                      </>
+                    )}
+                    {!symptom.isChecked && (
+                      <Text style={[stylesHomeScreen.symptomName, { marginLeft: 0 }]}>{symptom.name}</Text>
                     )}
                   </View>
                   {symptom.treatment && (

@@ -131,7 +131,7 @@ const stylesHomeScreen = StyleSheet.create({
     // CONTENTS SECTION
     contentSection: {
         flex: 1,
-        backgroundColor: 'rgb(244, 254, 255)',
+        backgroundColor: '#fff',
         width: '100%',
         justifyContent: 'center',
         alignItems: 'center',
@@ -369,20 +369,22 @@ const stylesHomeScreen = StyleSheet.create({
 
     // Empty Symptom State
     emptySymptomContainer: {
-        backgroundColor: 'rgb(244, 254, 255)',
+        backgroundColor: '#fff',
         borderRadius: 15,
-        padding: 20,
+        borderWidth: 0,
+        borderColor: 'rgba(198, 198, 198, 0.4)',
+        padding: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10,
-        shadowColor: 'rgb(23, 117, 129)',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 3,
+        marginBottom: 0,
+        // shadowColor: 'rgb(23, 117, 129)',
+        // shadowOffset: {
+        //     width: 0,
+        //     height: 2,
+        // },
+        // shadowOpacity: 0.1,
+        // shadowRadius: 3,
+        // elevation: 3,
     },
     emptySymptomText: {
         fontSize: 18,
@@ -412,20 +414,15 @@ const stylesHomeScreen = StyleSheet.create({
 
     // Empty Medicine State
     emptyMedicineContainer: {
-        backgroundColor: 'rgb(244, 254, 255)',
+        backgroundColor: '#fff',
         borderRadius: 15,
-        padding: 20,
+        borderWidth: 0,
+        borderColor: 'rgba(198, 198, 198, 0.4)',
+        padding: 16,
         alignItems: 'center',
         justifyContent: 'center',
-        marginBottom: 10,
-        shadowColor: 'rgb(23, 117, 129)',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 3,
+        marginBottom: 0,
+     
     },
     emptyMedicineText: {
         fontSize: 18,

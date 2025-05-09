@@ -11,15 +11,15 @@ interface WaterContextData {
   currentIntake: number;
   totalGoal: number;
   intakeVolume: number;
-  measurement: string;
   lastResetDate: string;
   intakes: WaterIntake[];
   addWaterIntake: () => void;
   removeIntake: (id: string) => void;
   setTotalGoal: (value: number) => void;
   setIntakeVolume: (value: number) => void;
-  setMeasurement: (value: string) => void;
   resetIntake: () => void;
+  setCurrentIntake: (value: number) => void;
+  setIntakes: (intakes: WaterIntake[]) => void;
 }
 
 const WaterContext = createContext<WaterContextData>({} as WaterContextData);
@@ -30,7 +30,6 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentIntake, setCurrentIntake] = useState(0);
   const [totalGoal, setTotalGoal] = useState(2500);
   const [intakeVolume, setIntakeVolume] = useState(250);
-  const [measurement, setMeasurement] = useState('ml');
   const [lastResetDate, setLastResetDate] = useState(new Date().toDateString());
   const [intakes, setIntakes] = useState<WaterIntake[]>([]);
 
@@ -66,7 +65,6 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       if (savedData) {
         const data = JSON.parse(savedData);
         setIntakeVolume(data.intakeVolume);
-        setMeasurement(data.measurement);
         setTotalGoal(data.totalGoal);
         setCurrentIntake(data.currentIntake);
         setLastResetDate(data.lastResetDate);
@@ -105,11 +103,10 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       currentIntake,
       totalGoal,
       intakeVolume,
-      measurement,
       lastResetDate,
       intakes
     });
-  }, [currentIntake, totalGoal, intakeVolume, measurement, lastResetDate, intakes, saveData]);
+  }, [currentIntake, totalGoal, intakeVolume, lastResetDate, intakes, saveData]);
 
   const addWaterIntake = useCallback(() => {
     if (currentIntake + intakeVolume <= totalGoal) {
@@ -144,15 +141,15 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     currentIntake,
     totalGoal,
     intakeVolume,
-    measurement,
     lastResetDate,
     intakes,
     addWaterIntake,
     removeIntake,
     setTotalGoal,
     setIntakeVolume,
-    setMeasurement,
-    resetIntake
+    resetIntake,
+    setCurrentIntake,
+    setIntakes
   };
 
   return (
