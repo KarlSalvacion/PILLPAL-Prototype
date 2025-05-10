@@ -16,8 +16,8 @@ const AppContent = () => {
   return (
     <SafeAreaView style={stylesGlobal.safeAreaContainer}>
       <StatusBar
-        barStyle="dark-content"
-        backgroundColor="rgb(68, 171, 181)"
+        barStyle="light-content"
+        backgroundColor="#000000"
         translucent={true}
       />
       <NavigationContainer>
