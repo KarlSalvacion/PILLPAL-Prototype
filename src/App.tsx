@@ -5,8 +5,8 @@ import { AuthProvider } from './context/AuthContext';
 import { MedicineProvider } from './context/MedicineContext';
 import { WaterProvider } from './context/WaterContext';
 import { NotificationProvider } from './context/NotificationContext';
-import { SymptomProvider } from 'context/SymptomContext';
-import { CalendarProvider } from 'context/CalendarContext';
+import { SymptomProvider } from './context/SymptomContext';
+import { CalendarProvider } from './context/CalendarContext';
 import { ContactProvider } from './context/ContactContext';
 import stylesGlobal from './styles/styles-screen/StylesGlobal';
 import AppNavigator from './navigation/AppNavigator';
@@ -42,19 +42,19 @@ const App = () => {
 
   return (
     <AuthProvider>
-      <ContactProvider>
-        <NotificationProvider>
+      <NotificationProvider>
+        <WaterProvider>
           <MedicineProvider>
-              <WaterProvider>
-                <SymptomProvider>
-                  <CalendarProvider>
+            <SymptomProvider>
+              <ContactProvider>
+                <CalendarProvider>
                   <AppContent />
                 </CalendarProvider>
-              </SymptomProvider>
-            </WaterProvider>
+              </ContactProvider>
+            </SymptomProvider>
           </MedicineProvider>
-        </NotificationProvider>
-      </ContactProvider>
+        </WaterProvider>
+      </NotificationProvider>
     </AuthProvider>
   );
 };

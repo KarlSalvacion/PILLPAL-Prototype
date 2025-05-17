@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, Modal, Pressable, ScrollView, Animated, PanResponder } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, ScrollView, Animated, PanResponder } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { allSymptoms } from '../data/SymptomsList';
@@ -105,7 +105,7 @@ const AddSymptomModal: React.FC<AddSymptomModalProps> = ({ visible, onClose, onS
           { opacity: fadeAnim }
         ]}
       >
-        <Pressable 
+        <TouchableOpacity 
           style={stylesAddSymptomModal.modalOverlay}
           onPress={handleClose}
         >
@@ -114,7 +114,7 @@ const AddSymptomModal: React.FC<AddSymptomModalProps> = ({ visible, onClose, onS
             tint="dark"
             style={stylesAddSymptomModal.blurView}
           />
-        </Pressable>
+        </TouchableOpacity>
         <Animated.View 
           style={[
             stylesAddSymptomModal.modalContent,
@@ -132,14 +132,14 @@ const AddSymptomModal: React.FC<AddSymptomModalProps> = ({ visible, onClose, onS
 
           <View style={stylesAddSymptomModal.modalHeader}>
             <Text style={stylesAddSymptomModal.modalTitle}>Add Symptoms</Text>
-            <Pressable onPress={handleClose} style={stylesAddSymptomModal.closeButton}>
+            <TouchableOpacity onPress={handleClose} style={stylesAddSymptomModal.closeButton}>
               <MaterialCommunityIcons name="close" size={24} color="#177581" />
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
           <ScrollView style={stylesAddSymptomModal.symptomsList}>
             {allSymptoms.map(symptom => (
-              <Pressable
+              <TouchableOpacity
                 key={symptom.id}
                 style={stylesAddSymptomModal.symptomItem}
                 onPress={() => handleSymptomSelect(symptom.id)}
@@ -153,13 +153,13 @@ const AddSymptomModal: React.FC<AddSymptomModalProps> = ({ visible, onClose, onS
                     <MaterialCommunityIcons name="check" size={16} color="#fff" />
                   )}
                 </View>
-              </Pressable>
+              </TouchableOpacity>
             ))}
           </ScrollView>
 
-          <Pressable style={stylesAddSymptomModal.saveButton} onPress={handleSave}>
+          <TouchableOpacity style={stylesAddSymptomModal.saveButton} onPress={handleSave}>
             <Text style={stylesAddSymptomModal.saveButtonText}>Save Symptoms</Text>
-          </Pressable>
+          </TouchableOpacity>
         </Animated.View>
       </Animated.View>
     </Modal>

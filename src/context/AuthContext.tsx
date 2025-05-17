@@ -86,7 +86,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      const userId = user?.id;
       await AsyncStorage.removeItem('@user');
+      // Clear user-specific data
+      await AsyncStorage.removeItem(`@water_tracker_data_${userId}`);
+      await AsyncStorage.removeItem(`medicines_${userId}`);
+      await AsyncStorage.removeItem(`trackedSymptoms_${userId}`);
+      await AsyncStorage.removeItem(`notifications_${userId}`); // Add this line
       setUser(null);
       setIsAuthenticated(false);
     } catch (error) {
@@ -102,4 +108,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);

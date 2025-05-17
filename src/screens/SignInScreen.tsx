@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
 import stylesSignIn from '../styles/styles-screen/StylesSignInScreen';
 import { Ionicons } from '@expo/vector-icons';
-
-const SignInSchema = Yup.object().shape({
-  email: Yup.string()
-    .email('Invalid email')
-    .required('Email is required'),
-  password: Yup.string()
-    .min(6, 'Password must be at least 6 characters')
-    .required('Password is required'),
-});
+import { SignInSchema } from 'validations/ValidationSchema';
 
 const SignInScreen = ({ navigation }: any) => {
   const { signIn } = useAuth();
