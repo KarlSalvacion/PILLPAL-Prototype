@@ -54,8 +54,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error('Sign in error:', error);
-      throw error;
+      // Remove console.error and just throw the error
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('Failed to sign in');
     }
   };
 
@@ -79,8 +82,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       accounts.push(newUser);
       await FileService.writeAccounts(accounts);
     } catch (error) {
-      console.error('Sign up error:', error);
-      throw error;
+      // Remove console.error and just throw the error
+      // This prevents the error from showing in the Expo client
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('Failed to create account');
     }
   };
 
@@ -96,7 +103,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(null);
       setIsAuthenticated(false);
     } catch (error) {
-      console.error('Sign out error:', error);
+      // Remove console.error and just throw the error
       throw new Error('Failed to sign out');
     }
   };

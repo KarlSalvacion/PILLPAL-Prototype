@@ -165,4 +165,4 @@ export const useWater = () => {
     throw new Error('useWater must be used within a WaterProvider');
   }
   return context;
-}; 
+};

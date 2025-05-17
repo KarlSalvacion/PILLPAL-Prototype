@@ -14,7 +14,7 @@ const SignUpScreen = ({ navigation }: any) => {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: '#fff' }}
     >
       <ScrollView 
         contentContainerStyle={{ flexGrow: 1 }}

@@ -51,9 +51,7 @@ const stylesContact = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-
     paddingBottom: 12,
-
   },
   contactName: {
     fontSize: 18,
@@ -65,8 +63,19 @@ const stylesContact = StyleSheet.create({
     color: '#666666',
     marginTop: 4,
   },
+
+  controlsSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+
   contactDetails: {
     gap: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   contactDetail: {
     fontSize: 15,
@@ -74,10 +83,39 @@ const stylesContact = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+
+  editButton: {
+    padding: 0,
+    marginLeft: 0,
+  },
+
   deleteButton: {
     padding: 8,
     marginLeft: 8,
   },
+  divider: {
+    flexDirection: 'row',
+    height: 100,
+    backgroundColor: '#E0E0E0',
+    marginVertical: 12,
+  },
+
+  callButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 100,
+    height: 40,
+    backgroundColor: '#177581',
+    padding: 0,
+    borderRadius: 24,
+    gap: 8,
+  },
+  callButtonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  }, 
   emptyState: {
     flex: 1,
     justifyContent: 'center',

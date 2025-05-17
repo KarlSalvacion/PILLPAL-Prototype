@@ -96,4 +96,4 @@ export const useSymptoms = () => {
     throw new Error('useSymptoms must be used within a SymptomProvider');
   }
   return context;
-}; 
+};
