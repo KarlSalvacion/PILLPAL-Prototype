@@ -28,9 +28,9 @@ export const ContactProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (user?.id) {
       loadContacts();
     } else {
-      setContacts([]); // Clear contacts when no user is logged in
+      setContacts([]);
     }
-  }, [user?.id]); // Reload when user changes
+  }, [user?.id]);
 
   const loadContacts = async () => {
     try {

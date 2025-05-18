@@ -41,9 +41,9 @@ export const MedicineProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     if (user?.id) {
       loadMedicines();
     } else {
-      setMedicines([]); // Clear medicines when no user is logged in
+      setMedicines([]); 
     }
-  }, [user?.id]); // Add user?.id as dependency
+  }, [user?.id]);
 
   const loadMedicines = async () => {
     if (!user?.id) return;

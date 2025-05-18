@@ -35,7 +35,6 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [lastResetDate, setLastResetDate] = useState(new Date().toDateString());
   const [intakes, setIntakes] = useState<WaterIntake[]>([]);
 
-  // Check for new day and reset if needed
   useEffect(() => {
     const checkAndResetForNewDay = () => {
       const today = new Date().toDateString();
@@ -46,17 +45,13 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       }
     };
 
-    // Check immediately on mount
     checkAndResetForNewDay();
 
-    // Set up interval to check every minute
     const intervalId = setInterval(checkAndResetForNewDay, 60000);
 
-    // Clean up interval on unmount
     return () => clearInterval(intervalId);
   }, [lastResetDate]);
 
-  // Load data when user changes
   useEffect(() => {
     if (user?.id) {
       loadData();
@@ -79,7 +74,6 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         setLastResetDate(data.lastResetDate);
         setIntakes(data.intakes || []);
 
-        // Reset intake if it's a new day
         const today = new Date().toDateString();
         if (data.lastResetDate !== today) {
           setCurrentIntake(0);
@@ -106,7 +100,6 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, []);
 
-  // Save data when it changes
   useEffect(() => {
     saveData({
       currentIntake,

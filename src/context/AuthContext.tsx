@@ -64,7 +64,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       setIsAuthenticated(true);
     } catch (error) {
-      // Remove console.error and just throw the error
+
       if (error instanceof Error) {
         throw new Error(error.message);
       }
@@ -92,8 +92,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       accounts.push(newUser);
       await FileService.writeAccounts(accounts);
     } catch (error) {
-      // Remove console.error and just throw the error
-      // This prevents the error from showing in the Expo client
+
       if (error instanceof Error) {
         throw new Error(error.message);
       }

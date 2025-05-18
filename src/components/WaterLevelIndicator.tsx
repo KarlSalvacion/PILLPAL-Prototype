@@ -16,11 +16,9 @@ const WaterLevelIndicator: React.FC<WaterLevelIndicatorProps> = ({
 }) => {
   const fillPercentage = Math.min((currentIntake / totalGoal) * 100, 100);
   const waterHeight = (fillPercentage / 100) * (size * 0.8);
-  
-  // Create animated value for water height
+
   const animatedHeight = useRef(new Animated.Value(0)).current;
 
-  // Animate water height when it changes
   useEffect(() => {
     Animated.spring(animatedHeight, {
       toValue: waterHeight,

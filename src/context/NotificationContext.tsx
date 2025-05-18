@@ -29,7 +29,6 @@ interface Notification {
 
 const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
 
-// Configure notifications
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -52,23 +51,20 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [user?.id]);
 
   useEffect(() => {
-    // Add notification received listener
     const subscription = Notifications.addNotificationReceivedListener(async (notification) => {
-      console.log('Notification received:', notification); // Debug log
+      console.log('Notification received:', notification);
       try {
         const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
         const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
         
-        // Find the original notification by matching the identifier
         const triggeredNotification = notifications.find((n: Notification) => 
           n.id === notification.request.identifier || 
           notification.request.identifier.startsWith(n.id)
         );
         
-        console.log('Found triggered notification:', triggeredNotification); // Debug log
+        console.log('Found triggered notification:', triggeredNotification);
         
         if (triggeredNotification) {
-          // Create a triggered notification entry
           const triggeredEntry: Notification = {
             ...triggeredNotification,
             id: `${triggeredNotification.id}_triggered_${Date.now()}`,
@@ -76,7 +72,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
             isTriggered: true
           };
           
-          console.log('Adding triggered entry:', triggeredEntry); // Debug log
+          console.log('Adding triggered entry:', triggeredEntry); 
           
           notifications.push(triggeredEntry);
           await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
@@ -87,7 +83,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     });
 
     const responseSubscription = Notifications.addNotificationResponseReceivedListener(async (response) => {
-      console.log('Notification response received:', response); // Debug log
+      console.log('Notification response received:', response); 
       try {
         const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
         const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];

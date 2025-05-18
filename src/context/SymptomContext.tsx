@@ -30,9 +30,9 @@ export const SymptomProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (user?.id) {
       loadTrackedSymptoms();
     } else {
-      setTrackedSymptoms([]); // Clear symptoms when no user is logged in
+      setTrackedSymptoms([]);
     }
-  }, [user?.id]); // Already has user?.id as dependency
+  }, [user?.id]);
 
   const loadTrackedSymptoms = async () => {
     if (!user?.id) return;
@@ -68,8 +68,19 @@ export const SymptomProvider: React.FC<{ children: React.ReactNode }> = ({ child
     });
 
     const updatedSymptoms = [...trackedSymptoms];
+    
+    // Handle each new symptom
     newSymptoms.forEach(newSymptom => {
-      if (!updatedSymptoms.some(s => s.id === newSymptom.id)) {
+      const existingIndex = updatedSymptoms.findIndex(s => s.id === newSymptom.id);
+      
+      if (existingIndex !== -1) {
+        // If symptom exists, update it with new timestamp and reset isChecked
+        updatedSymptoms[existingIndex] = {
+          ...newSymptom,
+          treatment: updatedSymptoms[existingIndex].treatment || newSymptom.treatment
+        };
+      } else {
+        // If symptom doesn't exist, add it
         updatedSymptoms.push(newSymptom);
       }
     });

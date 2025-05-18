@@ -36,6 +36,9 @@ const AddSymptomModal: React.FC<AddSymptomModalProps> = ({ visible, onClose, onS
           stiffness: 300,
         })
       ]).start();
+    } else {
+      // Reset selected symptoms when modal is closed
+      setSelectedSymptoms([]);
     }
   }, [visible]);
 
@@ -75,7 +78,11 @@ const AddSymptomModal: React.FC<AddSymptomModalProps> = ({ visible, onClose, onS
         duration: 200,
         useNativeDriver: true
       })
-    ]).start(onClose);
+    ]).start(() => {
+      // Reset selected symptoms before closing
+      setSelectedSymptoms([]);
+      onClose();
+    });
   };
 
   const handleSymptomSelect = (symptomId: string) => {
