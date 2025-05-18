@@ -18,8 +18,13 @@ const WaterTrackerScreen = ({ navigation }: any) => {
     setIntakeVolume,
     resetIntake,
     setCurrentIntake,
-    setIntakes
+    setIntakes,
+    loadData // Add this from context
   } = useWater();
+
+  useEffect(() => {
+    loadData(); // Load data when screen mounts
+  }, []);
 
   const [isGoalModalVisible, setGoalModalVisible] = useState(false);
   const [isVolumeModalVisible, setVolumeModalVisible] = useState(false);
@@ -175,6 +180,8 @@ const WaterTrackerScreen = ({ navigation }: any) => {
             onChangeText={handleVolumeChange}
             placeholder="Enter volume"
             placeholderTextColor="#a0a0a0"
+            testID="volumeInput"
+            id="volumeInput"
           />
 
           <View style={stylesWaterTracker.modalButtons}>
@@ -226,6 +233,8 @@ const WaterTrackerScreen = ({ navigation }: any) => {
             onChangeText={setNewGoal}
             placeholder="Enter goal"
             placeholderTextColor="#a0a0a0"
+            testID="goalInput"
+            id="goalInput"
           />
           <View style={stylesWaterTracker.modalButtons}>
             <TouchableOpacity
@@ -327,4 +336,4 @@ const WaterTrackerScreen = ({ navigation }: any) => {
   );
 };
 
-export default WaterTrackerScreen; 
+export default WaterTrackerScreen;

@@ -44,7 +44,7 @@ const SideMenu: React.FC<SideMenuProps> = ({ visible, onClose, navigation }) => 
 
   const menuItems: MenuItem[] = [
     { icon: 'home-outline', label: 'Home', screen: 'Home' },
-    { icon: 'pill', label: 'Medicines', screen: 'AddMedicine' },
+    { icon: 'pill', label: 'Medicines', screen: 'Medicine' },
     { icon: 'calendar-outline', label: 'Schedule', screen: 'Home' },
     { icon: 'account-outline', label: 'Profile', screen: 'Home' },
     { icon: 'cog-outline', label: 'Settings', screen: 'Home' },

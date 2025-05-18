@@ -24,7 +24,7 @@ const AddMedicineScreen = ({ navigation }: any) => {
   });
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [repeatCount, setRepeatCount] = useState(1);
-  const [intervalHours, setIntervalHours] = useState(0);
+  const [intervalHours, setIntervalHours] = useState(1); // Changed from 0 to 1
   const [isRepeating, setIsRepeating] = useState(false);
   const [quantity, setQuantity] = useState('1');
 
@@ -88,7 +88,7 @@ const AddMedicineScreen = ({ navigation }: any) => {
                 isActive: true,
                 isRepeating: isRepeating,
                 repeatCount: isRepeating ? repeatCount : 1,
-                intervalHours: isRepeating ? intervalHours : 0,
+                intervalHours: isRepeating ? intervalHours : 1,
                 quantity: parseInt(quantity) || 1,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
@@ -317,4 +317,4 @@ const AddMedicineScreen = ({ navigation }: any) => {
   );
 };
 
-export default AddMedicineScreen; 
+export default AddMedicineScreen;

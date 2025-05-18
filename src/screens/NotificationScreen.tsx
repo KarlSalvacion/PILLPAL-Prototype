@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, FlatList, Alert } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNotification } from '../context/NotificationContext';
-import { useAuth } from '../context/AuthContext'; // Add this import
+import { useAuth } from '../context/AuthContext';
 import stylesNotification from '../styles/styles-screen/StylesNotificationScreen';
 
 interface Notification {
@@ -19,33 +18,8 @@ interface Notification {
 }
 
 const NotificationScreen = ({ navigation }: any) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { cancelNotification } = useNotification();
-  const { user } = useAuth(); // Add this
-
-  const STORAGE_KEY = `notifications_${user?.id}`; // Add this
-
-  useEffect(() => {
-    loadNotifications();
-  }, [user?.id]); // Add user?.id as dependency
-
-  const loadNotifications = async () => {
-    try {
-      const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
-      if (storedNotifications) {
-        const parsedNotifications = JSON.parse(storedNotifications);
-        const sortedNotifications = parsedNotifications.sort((a: Notification, b: Notification) => {
-          if (a.isTaken === b.isTaken) {
-            return new Date(b.time).getTime() - new Date(a.time).getTime();
-          }
-          return a.isTaken ? 1 : -1;
-        });
-        setNotifications(sortedNotifications);
-      }
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-    }
-  };
+  const { notifications = [], cancelNotification } = useNotification() as unknown as { notifications: Notification[], cancelNotification: (id: string) => Promise<void> }; // Get notifications from context
+  const { user } = useAuth();
 
   const handleDelete = async (id: string) => {
     Alert.alert(
@@ -62,11 +36,6 @@ const NotificationScreen = ({ navigation }: any) => {
           onPress: async () => {
             try {
               await cancelNotification(id);
-              const updatedNotifications = notifications.filter(
-                notification => notification.id !== id
-              );
-              setNotifications(updatedNotifications);
-              await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotifications));
             } catch (error) {
               console.error('Error deleting notification:', error);
               Alert.alert('Error', 'Failed to delete notification. Please try again.');

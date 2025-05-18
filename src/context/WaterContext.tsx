@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from './AuthContext';
 
 interface WaterIntake {
   id: string;
@@ -20,13 +21,14 @@ interface WaterContextData {
   resetIntake: () => void;
   setCurrentIntake: (value: number) => void;
   setIntakes: (intakes: WaterIntake[]) => void;
+  loadData: () => Promise<void>;
 }
 
 const WaterContext = createContext<WaterContextData>({} as WaterContextData);
 
-const STORAGE_KEY = '@water_tracker_data';
-
 export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  const STORAGE_KEY = `@water_tracker_data_${user?.id}`;
   const [currentIntake, setCurrentIntake] = useState(0);
   const [totalGoal, setTotalGoal] = useState(2500);
   const [intakeVolume, setIntakeVolume] = useState(250);
@@ -54,12 +56,19 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return () => clearInterval(intervalId);
   }, [lastResetDate]);
 
-  // Load data on mount
+  // Load data when user changes
   useEffect(() => {
-    loadData();
-  }, []);
+    if (user?.id) {
+      loadData();
+    } else {
+      setCurrentIntake(0);
+      setIntakes([]);
+      setLastResetDate(new Date().toDateString());
+    }
+  }, [user?.id]);
 
   const loadData = async () => {
+    if (!user?.id) return;
     try {
       const savedData = await AsyncStorage.getItem(STORAGE_KEY);
       if (savedData) {
@@ -137,23 +146,22 @@ export const WaterProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setIntakes([]);
   }, []);
 
-  const value = {
-    currentIntake,
-    totalGoal,
-    intakeVolume,
-    lastResetDate,
-    intakes,
-    addWaterIntake,
-    removeIntake,
-    setTotalGoal,
-    setIntakeVolume,
-    resetIntake,
-    setCurrentIntake,
-    setIntakes
-  };
-
   return (
-    <WaterContext.Provider value={value}>
+    <WaterContext.Provider value={{
+      currentIntake,
+      totalGoal,
+      intakeVolume,
+      lastResetDate,
+      intakes,
+      addWaterIntake,
+      removeIntake,
+      setTotalGoal,
+      setIntakeVolume,
+      resetIntake,
+      setCurrentIntake,
+      setIntakes,
+      loadData
+    }}>
       {children}
     </WaterContext.Provider>
   );

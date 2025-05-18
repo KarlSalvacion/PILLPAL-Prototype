@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNotification } from './NotificationContext';
+import { useAuth } from './AuthContext';
 
 interface Medicine {
   id: string;
@@ -31,16 +32,23 @@ interface MedicineContextType {
 const MedicineContext = createContext<MedicineContextType | undefined>(undefined);
 
 export const MedicineProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user } = useAuth();
+  const STORAGE_KEY = `medicines_${user?.id}`;
   const [medicines, setMedicines] = useState<Medicine[]>([]);
   const { cancelNotification, rescheduleNotifications } = useNotification();
 
   useEffect(() => {
-    loadMedicines();
-  }, []);
+    if (user?.id) {
+      loadMedicines();
+    } else {
+      setMedicines([]); // Clear medicines when no user is logged in
+    }
+  }, [user?.id]); // Add user?.id as dependency
 
   const loadMedicines = async () => {
+    if (!user?.id) return;
     try {
-      const storedMedicines = await AsyncStorage.getItem('medicines');
+      const storedMedicines = await AsyncStorage.getItem(STORAGE_KEY);
       if (storedMedicines) {
         const parsedMedicines = JSON.parse(storedMedicines);
         setMedicines(parsedMedicines);
@@ -53,7 +61,7 @@ export const MedicineProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const saveMedicines = async (newMedicines: Medicine[]) => {
     try {
-      await AsyncStorage.setItem('medicines', JSON.stringify(newMedicines));
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newMedicines));
       setMedicines(newMedicines);
     } catch (error) {
       console.error('Error saving medicines:', error);
@@ -117,4 +125,4 @@ export const useMedicine = () => {
     throw new Error('useMedicine must be used within a MedicineProvider');
   }
   return context;
-}; 
+};

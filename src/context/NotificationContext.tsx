@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAuth } from './AuthContext';
 
 interface NotificationContextType {
   scheduleNotification: (medicine: any) => Promise<string | undefined>;
@@ -38,10 +39,14 @@ Notifications.setNotificationHandler({
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [hasPermission, setHasPermission] = useState<boolean>(false);
+  const { user } = useAuth();
+  const STORAGE_KEY = `notifications_${user?.id}`;
 
   useEffect(() => {
-    setupNotifications();
-  }, []);
+    if (user?.id) {
+      setupNotifications();
+    }
+  }, [user?.id]); // Add user?.id as dependency
 
   const setupNotifications = async () => {
     await requestPermissions();
@@ -143,17 +148,17 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       isTaken: false
     };
 
-    const storedNotifications = await AsyncStorage.getItem('notifications');
+    const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
     const notifications = storedNotifications ? JSON.parse(storedNotifications) : [];
     notifications.push(notificationData);
-    await AsyncStorage.setItem('notifications', JSON.stringify(notifications));
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
 
     return notificationIds[0];
   };
 
   const markMedicineAsTaken = async (medicineId: string, notificationId: string) => {
     try {
-      const storedNotifications = await AsyncStorage.getItem('notifications');
+      const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
       if (storedNotifications) {
         const notifications = JSON.parse(storedNotifications);
         const originalNotification = notifications.find((n: Notification) => n.id === notificationId);
@@ -174,7 +179,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
           // Add the new taken notification to the list
           notifications.push(takenNotification);
-          await AsyncStorage.setItem('notifications', JSON.stringify(notifications));
+          await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(notifications));
 
           // Schedule a confirmation notification
           await Notifications.scheduleNotificationAsync({
@@ -196,17 +201,16 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   const cancelNotification = async (notificationId: string) => {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
     
-    // Remove from storage
-    const storedNotifications = await AsyncStorage.getItem('notifications');
+    const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
     if (storedNotifications) {
       const notifications = JSON.parse(storedNotifications);
       const updatedNotifications = notifications.filter((n: Notification) => n.id !== notificationId);
-      await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedNotifications));
     }
   };
 
   const rescheduleNotifications = async () => {
-    const storedNotifications = await AsyncStorage.getItem('notifications');
+    const storedNotifications = await AsyncStorage.getItem(STORAGE_KEY);
     if (storedNotifications) {
       const notifications = JSON.parse(storedNotifications);
       for (const notification of notifications) {
@@ -249,4 +253,4 @@ export const useNotification = () => {
     throw new Error('useNotification must be used within a NotificationProvider');
   }
   return context;
-}; 
+};
