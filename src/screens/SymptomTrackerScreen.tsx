@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Pressable, Alert, ScrollView } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSymptoms } from '../context/SymptomContext';
@@ -6,7 +6,17 @@ import AddSymptomModal from '../components/AddSymptomModal';
 import stylesSymptomTracker from '../styles/styles-screen/StylesSymptomTracker';
 
 const SymptomTrackerScreen = ({ navigation }: any) => {
-  const { trackedSymptoms, addSymptoms, removeSymptom, toggleSymptom } = useSymptoms();
+  const { 
+    trackedSymptoms, 
+    addSymptoms, 
+    removeSymptom, 
+    toggleSymptom,
+    loadTrackedSymptoms // Add this from context
+  } = useSymptoms();
+
+  useEffect(() => {
+    loadTrackedSymptoms(); // Load symptoms when screen mounts
+  }, []);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const activeSymptoms = trackedSymptoms.filter(symptom => !symptom.isChecked);
@@ -145,4 +155,4 @@ const SymptomTrackerScreen = ({ navigation }: any) => {
   );
 };
 
-export default SymptomTrackerScreen; 
+export default SymptomTrackerScreen;

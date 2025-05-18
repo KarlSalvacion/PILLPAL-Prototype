@@ -11,7 +11,7 @@ const stylesSymptomTracker = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#fff',
   },
   title: {
     fontSize: 24,
@@ -25,7 +25,7 @@ const stylesSymptomTracker = StyleSheet.create({
     padding: 16,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     color: '#177581',
     marginBottom: 16,
@@ -58,11 +58,12 @@ const stylesSymptomTracker = StyleSheet.create({
     marginLeft: 8,
   },
   symptomDetails: {
-    marginBottom: 12,
+    marginBottom: 8,
   },
   detailText: {
     fontSize: 14,
     color: '#666',
+    marginBottom: 4,
   },
   actionButtons: {
     flexDirection: 'row',
@@ -100,7 +101,7 @@ const stylesSymptomTracker = StyleSheet.create({
     fontWeight: 'bold',
   },
   emptyState: {
-    padding: 16,
+    padding: 20,
     alignItems: 'center',
   },
   emptyStateText: {

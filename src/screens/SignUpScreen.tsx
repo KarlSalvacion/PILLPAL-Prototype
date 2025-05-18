@@ -1,33 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
 import stylesSignUp from '../styles/styles-screen/StylesSignUpScreen';
 import { Ionicons } from '@expo/vector-icons';
-
-const SignUpSchema = Yup.object().shape({
-  name: Yup.string()
-    .min(2, 'Name must be at least 2 characters')
-    .required('Name is required'),
-  email: Yup.string()
-    .email('Invalid email format')
-    .matches(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      'Email must be in a valid format (e.g., user@domain.com)'
-    )
-    .required('Email is required'),
-  password: Yup.string()
-    .min(6, 'Password must be at least 6 characters')
-    .matches(
-      /^(?=.*[A-Za-z])(?=.*\d)/,
-      'Password must contain at least one letter and one number'
-    )
-    .required('Password is required'),
-  confirmPassword: Yup.string()
-    .oneOf([Yup.ref('password')], 'Passwords must match')
-    .required('Confirm password is required'),
-});
+import { SignUpSchema } from '../validations/ValidationSchema';
 
 const SignUpScreen = ({ navigation }: any) => {
   const { signUp } = useAuth();
@@ -37,7 +14,7 @@ const SignUpScreen = ({ navigation }: any) => {
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
+      style={{ flex: 1, backgroundColor: '#fff' }}
     >
       <ScrollView 
         contentContainerStyle={{ flexGrow: 1 }}
@@ -47,20 +24,16 @@ const SignUpScreen = ({ navigation }: any) => {
           <Text style={stylesSignUp.title}>Create Account</Text>
           
           <Formik
-            initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
+            initialValues={{ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' }}
             validationSchema={SignUpSchema}
             onSubmit={async (values, { setSubmitting }) => {
               try {
-                await signUp(values.email, values.password, values.name);
+                const fullName = `${values.firstName} ${values.lastName}`;
+                await signUp(values.email, values.password, fullName);
                 Alert.alert(
                   'Account Created',
                   'Your account has been created successfully! Please sign in.',
-                  [
-                    {
-                      text: 'OK',
-                      onPress: () => navigation.navigate('SignIn')
-                    }
-                  ]
+                  [{ text: 'OK', onPress: () => navigation.navigate('SignIn') }]
                 );
               } catch (error) {
                 Alert.alert(
@@ -76,19 +49,36 @@ const SignUpScreen = ({ navigation }: any) => {
             {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
               <>
                 <View style={stylesSignUp.inputGroup}>
-                  <Text style={stylesSignUp.label}>Username</Text>
+                  <Text style={stylesSignUp.label}>First Name</Text>
                   <TextInput
                     style={stylesSignUp.input}
-                    placeholder="Enter your name"
-                    value={values.name}
-                    onChangeText={handleChange('name')}
-                    onBlur={handleBlur('name')}
+                    placeholder="Enter your first name"
+                    value={values.firstName}
+                    onChangeText={handleChange('firstName')}
+                    onBlur={handleBlur('firstName')}
                     autoCapitalize="words"
-                    autoComplete="name"
+                    autoComplete="name-given"
                     returnKeyType="next"
                   />
-                  {touched.name && errors.name && (
-                    <Text style={stylesSignUp.errorText}>{errors.name}</Text>
+                  {touched.firstName && errors.firstName && (
+                    <Text style={stylesSignUp.errorText}>{errors.firstName}</Text>
+                  )}
+                </View>
+
+                <View style={stylesSignUp.inputGroup}>
+                  <Text style={stylesSignUp.label}>Last Name</Text>
+                  <TextInput
+                    style={stylesSignUp.input}
+                    placeholder="Enter your last name"
+                    value={values.lastName}
+                    onChangeText={handleChange('lastName')}
+                    onBlur={handleBlur('lastName')}
+                    autoCapitalize="words"
+                    autoComplete="name-family"
+                    returnKeyType="next"
+                  />
+                  {touched.lastName && errors.lastName && (
+                    <Text style={stylesSignUp.errorText}>{errors.lastName}</Text>
                   )}
                 </View>
 
@@ -190,4 +180,4 @@ const SignUpScreen = ({ navigation }: any) => {
   );
 };
 
-export default SignUpScreen; 
+export default SignUpScreen;

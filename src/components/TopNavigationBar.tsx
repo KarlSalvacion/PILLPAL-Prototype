@@ -23,12 +23,18 @@ const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const { user } = useAuth();
 
+  const getFirstName = (fullName: string) => {
+    return fullName.split(' ')[0];
+  };
+
   return (
     <>
       <View style={stylesTopNavigator.topSection}>
         <View style={stylesTopNavigator.userContainer}>
           <View style={stylesTopNavigator.textContainer}>
-            <Text style={stylesTopNavigator.welcomeText}>Welcome, {user?.name || 'User'}</Text>
+            <Text style={stylesTopNavigator.welcomeText}>
+              Welcome, {user?.name ? getFirstName(user.name) : 'User'}
+            </Text>
           </View>
         </View>
 
@@ -54,4 +60,4 @@ const TopNavigationBar: React.FC<TopNavigationBarProps> = ({
   );
 };
 
-export default TopNavigationBar; 
+export default TopNavigationBar;

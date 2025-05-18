@@ -12,6 +12,16 @@ interface AuthContextData {
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
+
+export { AuthContext };
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<any>(null);
@@ -54,8 +64,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(user);
       setIsAuthenticated(true);
     } catch (error) {
-      console.error('Sign in error:', error);
-      throw error;
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('Failed to sign in');
     }
   };
 
@@ -79,18 +92,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       accounts.push(newUser);
       await FileService.writeAccounts(accounts);
     } catch (error) {
-      console.error('Sign up error:', error);
-      throw error;
+
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
+      throw new Error('Failed to create account');
     }
   };
 
   const signOut = async () => {
     try {
-      await AsyncStorage.removeItem('@user');
+      const userId = user?.id;
+      if (userId) {
+        await Promise.all([
+          AsyncStorage.removeItem(`medicines_${userId}`),
+          AsyncStorage.removeItem(`symptoms_${userId}`),
+          AsyncStorage.removeItem(`emergencyContacts_${userId}`),
+          AsyncStorage.removeItem(`@water_tracker_data_${userId}`),
+          AsyncStorage.removeItem('@user')
+        ]);
+      }
       setUser(null);
       setIsAuthenticated(false);
     } catch (error) {
-      console.error('Sign out error:', error);
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
       throw new Error('Failed to sign out');
     }
   };
@@ -101,5 +128,3 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </AuthContext.Provider>
   );
 };
-
-export const useAuth = () => useContext(AuthContext); 

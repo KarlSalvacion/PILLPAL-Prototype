@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Pressable, FlatList, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, Pressable, FlatList, Alert, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNotification } from '../context/NotificationContext';
+import { useAuth } from '../context/AuthContext';
 import stylesNotification from '../styles/styles-screen/StylesNotificationScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Notification {
   id: string;
@@ -15,32 +16,37 @@ interface Notification {
   intervalHours: number;
   isTaken: boolean;
   takenAt?: string;
+  isTriggered?: boolean;
 }
 
 const NotificationScreen = ({ navigation }: any) => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const { cancelNotification } = useNotification();
+  const { notifications = [], cancelNotification } = useNotification() as unknown as { notifications: Notification[], cancelNotification: (id: string) => Promise<void> };
+  const { user } = useAuth();
+  const [localNotifications, setLocalNotifications] = useState<Notification[]>([]);
+  const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
-    loadNotifications();
-  }, []);
-
-  const loadNotifications = async () => {
-    try {
-      const storedNotifications = await AsyncStorage.getItem('notifications');
-      if (storedNotifications) {
-        const parsedNotifications = JSON.parse(storedNotifications);
-        const sortedNotifications = parsedNotifications.sort((a: Notification, b: Notification) => {
-          if (a.isTaken === b.isTaken) {
-            return new Date(b.time).getTime() - new Date(a.time).getTime();
-          }
-          return a.isTaken ? 1 : -1;
-        });
-        setNotifications(sortedNotifications);
+    const loadNotifications = async () => {
+      try {
+        const storedNotifications = await AsyncStorage.getItem(`notifications_${user?.id}`);
+        if (storedNotifications) {
+          const parsedNotifications = JSON.parse(storedNotifications);
+          // Sort notifications by time, most recent first
+          const sortedNotifications = parsedNotifications.sort((a: Notification, b: Notification) => 
+            new Date(b.time).getTime() - new Date(a.time).getTime()
+          );
+          setLocalNotifications(sortedNotifications);
+        }
+      } catch (error) {
+        console.error('Error loading notifications:', error);
       }
-    } catch (error) {
-      console.error('Error loading notifications:', error);
-    }
+    };
+
+    loadNotifications();
+  }, [user?.id, notifications]);
+
+  const scrollToTop = () => {
+    flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
   };
 
   const handleDelete = async (id: string) => {
@@ -58,14 +64,45 @@ const NotificationScreen = ({ navigation }: any) => {
           onPress: async () => {
             try {
               await cancelNotification(id);
-              const updatedNotifications = notifications.filter(
-                notification => notification.id !== id
-              );
-              setNotifications(updatedNotifications);
-              await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+              // Update local notifications after deletion
+              setLocalNotifications(prev => prev.filter(n => n.id !== id));
             } catch (error) {
               console.error('Error deleting notification:', error);
               Alert.alert('Error', 'Failed to delete notification. Please try again.');
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const handleDeleteAll = async () => {
+    Alert.alert(
+      'Delete All Notifications',
+      'Are you sure you want to delete all notifications? This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete All',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // Delete all notifications from AsyncStorage
+              await AsyncStorage.removeItem(`notifications_${user?.id}`);
+              // Clear local state
+              setLocalNotifications([]);
+              // Cancel all scheduled notifications
+              for (const notification of localNotifications) {
+                if (!notification.isTaken && !notification.isTriggered) {
+                  await cancelNotification(notification.id);
+                }
+              }
+            } catch (error) {
+              console.error('Error deleting all notifications:', error);
+              Alert.alert('Error', 'Failed to delete all notifications. Please try again.');
             }
           },
         },
@@ -86,6 +123,7 @@ const NotificationScreen = ({ navigation }: any) => {
 
   const renderNotificationItem = ({ item }: { item: Notification }) => {
     const isTakenNotification = item.id.includes('_taken_');
+    const isTriggeredNotification = item.id.includes('_triggered_');
     const originalNotification = isTakenNotification 
       ? notifications.find(n => n.id === item.id.split('_taken_')[0])
       : null;
@@ -94,14 +132,20 @@ const NotificationScreen = ({ navigation }: any) => {
       <View style={[
         stylesNotification.notificationItem,
         item.isTaken && stylesNotification.takenItem,
+        isTriggeredNotification && stylesNotification.triggeredItem,
       ]}>
         <View style={stylesNotification.notificationContent}>
           <View style={stylesNotification.notificationHeader}>
             <Text style={stylesNotification.notificationTitle}>
-              {item.isTaken ? 'Medicine Taken' : 'Medicine Reminder'}
+              {item.isTaken ? 'Medicine Taken' : 
+               isTriggeredNotification ? 'Reminder Sent' : 
+               'Medicine Reminder'}
             </Text>
             {item.isTaken && (
               <MaterialCommunityIcons name="check-circle" size={20} color="#4CAF50" />
+            )}
+            {isTriggeredNotification && (
+              <MaterialCommunityIcons name="bell-ring" size={20} color="#177581" />
             )}
           </View>
           <Text style={stylesNotification.medicineName}>{item.medicineName}</Text>
@@ -112,16 +156,20 @@ const NotificationScreen = ({ navigation }: any) => {
             </Text>
           )}
           <Text style={stylesNotification.notificationTime}>
-            {item.isTaken ? 'Taken at: ' : 'Scheduled for: '}
+            {item.isTaken ? 'Taken at: ' : 
+             isTriggeredNotification ? 'Reminder sent at: ' :
+             'Scheduled for: '}
             {formatTime(item.isTaken ? item.takenAt! : item.time)}
           </Text>
-          {!item.isTaken && item.repeatCount > 1 && (
+          {!item.isTaken && !isTriggeredNotification && item.repeatCount > 1 && (
             <Text style={stylesNotification.repeatInfo}>
               Repeats {item.repeatCount} times every {item.intervalHours} hours
             </Text>
           )}
         </View>
-        <Pressable onPress={() => handleDelete(item.id)}>
+        <Pressable 
+          style={stylesNotification.deleteButton}
+          onPress={() => handleDelete(item.id)}>
           <MaterialCommunityIcons 
             name="trash-can-outline" 
             size={24} 
@@ -135,17 +183,31 @@ const NotificationScreen = ({ navigation }: any) => {
 
   return (
     <View style={stylesNotification.container}>
-      <View style={stylesNotification.header}>
-        <Pressable onPress={() => navigation.goBack()}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color="#177581" />
-        </Pressable>
-        <Text style={stylesNotification.headerTitle}>Notifications</Text>
-      </View>
+      <Pressable 
+        style={stylesNotification.header}
+        onPress={scrollToTop}>
+        <View style={stylesNotification.headerLeft}>
+          <Pressable onPress={() => navigation.goBack()}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color="#177581" />
+          </Pressable>
+          <Text style={stylesNotification.headerTitle}>Notifications</Text>
+        </View>
+        <View style={stylesNotification.deleteAllContainer}>
+          <TouchableOpacity 
+            style={stylesNotification.deleteAllButton}
+            onPress={handleDeleteAll}>
+            <Text style={stylesNotification.deleteAllText}>Delete All</Text>
+            <MaterialCommunityIcons name="trash-can-outline" size={24} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      </Pressable>
       <View style={stylesNotification.content}>
         <FlatList
-          data={notifications}
+          ref={flatListRef}
+          data={localNotifications}
           renderItem={renderNotificationItem}
           keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
           ListEmptyComponent={
             <View style={stylesNotification.emptyState}>
               <Text style={stylesNotification.emptyStateText}>
@@ -159,4 +221,4 @@ const NotificationScreen = ({ navigation }: any) => {
   );
 };
 
-export default NotificationScreen; 
+export default NotificationScreen;

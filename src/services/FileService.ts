@@ -43,6 +43,10 @@ export const FileService = {
   },
 
   generateUUID(): string {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    // Generate a UUID using a combination of timestamp and random numbers
+    const timestamp = new Date().getTime();
+    const randomPart = Math.floor(Math.random() * 1000000);
+    const uuid = `${timestamp}-${randomPart}-${Math.random().toString(36).substr(2, 9)}`;
+    return uuid;
   }
-}; 
+};

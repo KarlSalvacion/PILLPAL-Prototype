@@ -71,6 +71,7 @@ const stylesHomeScreen = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         gap: 10,
+        width: '100%',
     },
 
     dayBox: {
