@@ -1,6 +1,14 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FileService } from '../services/FileService';
+
+import { 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword, 
+  signOut as firebaseSignOut, 
+  updateProfile, 
+  onAuthStateChanged 
+} from 'firebase/auth';
+import { auth } from '../config/firebase'; // <-- Ensure this file exports the Firebase auth instance
 
 interface AuthContextData {
   isAuthenticated: boolean;
@@ -22,8 +30,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const initializeAuth = async () => {
     try {
-      await FileService.initialize();
-      await loadStoredData();
+      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          setUser(firebaseUser);
+          setIsAuthenticated(true);
+          await AsyncStorage.setItem('@user', JSON.stringify(firebaseUser));
+        } else {
+          setUser(null);
+          setIsAuthenticated(false);
+          await AsyncStorage.removeItem('@user');
+        }
+      });
+
+      return () => unsubscribe();
     } catch (error) {
       console.error('Error initializing auth:', error);
     }
@@ -43,16 +62,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      const accounts = await FileService.readAccounts();
-      const user = accounts.find(u => u.email === email && u.password === password);
-      
-      if (!user) {
-        throw new Error('Invalid email or password');
-      }
-      
-      await AsyncStorage.setItem('@user', JSON.stringify(user));
-      setUser(user);
-      setIsAuthenticated(true);
+      await signInWithEmailAndPassword(auth, email, password);
+      // No need to manually set user here — onAuthStateChanged will handle it
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
@@ -61,23 +72,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
-      const accounts = await FileService.readAccounts();
-      
-      const existingUser = accounts.find(u => u.email === email);
-      if (existingUser) {
-        throw new Error('Email already registered');
-      }
-
-      const newUser = {
-        id: FileService.generateUUID(),
-        name,
-        email,
-        password,
-        createdAt: new Date().toISOString()
-      };
-
-      accounts.push(newUser);
-      await FileService.writeAccounts(accounts);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, { displayName: name });
+      // No need to manually set user — onAuthStateChanged will handle it
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -86,6 +83,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
+      await firebaseSignOut(auth);
       await AsyncStorage.removeItem('@user');
       setUser(null);
       setIsAuthenticated(false);
@@ -102,4 +100,4 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);

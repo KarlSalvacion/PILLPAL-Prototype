@@ -1,16 +1,16 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
+
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
-  // Replace with your Firebase configuration
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyALPXkn8EC-dKzGJt4HWomXRtCwldhECVU",
+  authDomain: "pillpal-6a123.firebaseapp.com",
+  projectId: "pillpal-6a123",
+  storageBucket: "pillpal-6a123.firebasestorage.app",
+  messagingSenderId: "43146921987",
+  appId: "1:43146921987:web:ccf5997e346bee31216636",
+  measurementId: "G-9P1LGR59KL"
 };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-export const db = firebase.firestore(); 
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);

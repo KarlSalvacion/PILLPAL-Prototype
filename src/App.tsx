@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
-import { StatusBar, SafeAreaView } from 'react-native'
+import React from 'react';
+import { StatusBar, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { AuthProvider } from './context/AuthContext';
 import { MedicineProvider } from './context/MedicineContext';
 import { WaterProvider } from './context/WaterContext';
 import { NotificationProvider } from './context/NotificationContext';
-import { SymptomProvider } from 'context/SymptomContext';
-import { CalendarProvider } from 'context/CalendarContext';
+import { SymptomProvider } from './context/SymptomContext';
+import { CalendarProvider } from './context/CalendarContext';
 import { ContactProvider } from './context/ContactContext';
 import stylesGlobal from './styles/styles-screen/StylesGlobal';
 import AppNavigator from './navigation/AppNavigator';
-import { FileService } from './services/FileService';
+
+// ✅ Initialize Firebase (IMPORTANT)
+import './config/firebase'; // Keep this import to initialize Firebase
 
 const AppContent = () => {
   return (
@@ -28,26 +30,15 @@ const AppContent = () => {
 };
 
 const App = () => {
-  useEffect(() => {
-    const initializeApp = async () => {
-      try {
-        await FileService.initialize();
-      } catch (error) {
-        console.error('Error initializing app:', error);
-      }
-    };
-
-    initializeApp();
-  }, []);
-
+  // ⛔️ Removed FileService initialization
   return (
     <AuthProvider>
       <ContactProvider>
         <NotificationProvider>
           <MedicineProvider>
-              <WaterProvider>
-                <SymptomProvider>
-                  <CalendarProvider>
+            <WaterProvider>
+              <SymptomProvider>
+                <CalendarProvider>
                   <AppContent />
                 </CalendarProvider>
               </SymptomProvider>

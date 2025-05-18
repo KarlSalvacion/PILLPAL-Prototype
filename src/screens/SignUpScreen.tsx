@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useAuth } from '../context/AuthContext';
@@ -35,19 +44,24 @@ const SignUpScreen = ({ navigation }: any) => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={{ flex: 1 }}
     >
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
         <View style={stylesSignUp.container}>
           <Text style={stylesSignUp.title}>Create Account</Text>
-          
+
           <Formik
-            initialValues={{ name: '', email: '', password: '', confirmPassword: '' }}
+            initialValues={{
+              name: '',
+              email: '',
+              password: '',
+              confirmPassword: '',
+            }}
             validationSchema={SignUpSchema}
             onSubmit={async (values, { setSubmitting }) => {
               try {
@@ -58,14 +72,16 @@ const SignUpScreen = ({ navigation }: any) => {
                   [
                     {
                       text: 'OK',
-                      onPress: () => navigation.navigate('SignIn')
-                    }
+                      onPress: () => navigation.navigate('SignIn'),
+                    },
                   ]
                 );
               } catch (error) {
                 Alert.alert(
                   'Sign Up Failed',
-                  error instanceof Error ? error.message : 'Failed to create account',
+                  error instanceof Error
+                    ? error.message
+                    : 'Failed to create account',
                   [{ text: 'OK' }]
                 );
               } finally {
@@ -73,8 +89,17 @@ const SignUpScreen = ({ navigation }: any) => {
               }
             }}
           >
-            {({ handleChange, handleBlur, handleSubmit, values, errors, touched, isSubmitting }) => (
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              touched,
+              isSubmitting,
+            }) => (
               <>
+                {/* Name */}
                 <View style={stylesSignUp.inputGroup}>
                   <Text style={stylesSignUp.label}>Username</Text>
                   <TextInput
@@ -92,6 +117,7 @@ const SignUpScreen = ({ navigation }: any) => {
                   )}
                 </View>
 
+                {/* Email */}
                 <View style={stylesSignUp.inputGroup}>
                   <Text style={stylesSignUp.label}>Email</Text>
                   <TextInput
@@ -110,6 +136,7 @@ const SignUpScreen = ({ navigation }: any) => {
                   )}
                 </View>
 
+                {/* Password */}
                 <View style={stylesSignUp.inputGroup}>
                   <Text style={stylesSignUp.label}>Password</Text>
                   <View style={stylesSignUp.passwordContainer}>
@@ -123,22 +150,25 @@ const SignUpScreen = ({ navigation }: any) => {
                       autoComplete="password-new"
                       returnKeyType="next"
                     />
-                    <Pressable 
+                    <Pressable
                       style={stylesSignUp.eyeIcon}
                       onPress={() => setShowPassword(!showPassword)}
                     >
-                      <Ionicons 
-                        name={showPassword ? "eye-off" : "eye"} 
-                        size={24} 
-                        color="#666" 
+                      <Ionicons
+                        name={showPassword ? 'eye-off' : 'eye'}
+                        size={24}
+                        color="#666"
                       />
                     </Pressable>
                   </View>
                   {touched.password && errors.password && (
-                    <Text style={stylesSignUp.errorText}>{errors.password}</Text>
+                    <Text style={stylesSignUp.errorText}>
+                      {errors.password}
+                    </Text>
                   )}
                 </View>
 
+                {/* Confirm Password */}
                 <View style={stylesSignUp.inputGroup}>
                   <Text style={stylesSignUp.label}>Confirm Password</Text>
                   <View style={stylesSignUp.passwordContainer}>
@@ -152,24 +182,32 @@ const SignUpScreen = ({ navigation }: any) => {
                       autoComplete="password-new"
                       returnKeyType="done"
                     />
-                    <Pressable 
+                    <Pressable
                       style={stylesSignUp.eyeIcon}
-                      onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                      onPress={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
                     >
-                      <Ionicons 
-                        name={showConfirmPassword ? "eye-off" : "eye"} 
-                        size={24} 
-                        color="#666" 
+                      <Ionicons
+                        name={showConfirmPassword ? 'eye-off' : 'eye'}
+                        size={24}
+                        color="#666"
                       />
                     </Pressable>
                   </View>
                   {touched.confirmPassword && errors.confirmPassword && (
-                    <Text style={stylesSignUp.errorText}>{errors.confirmPassword}</Text>
+                    <Text style={stylesSignUp.errorText}>
+                      {errors.confirmPassword}
+                    </Text>
                   )}
                 </View>
 
-                <Pressable 
-                  style={[stylesSignUp.button, isSubmitting && stylesSignUp.buttonDisabled]} 
+                {/* Submit */}
+                <Pressable
+                  style={[
+                    stylesSignUp.button,
+                    isSubmitting && stylesSignUp.buttonDisabled,
+                  ]}
                   onPress={() => handleSubmit()}
                   disabled={isSubmitting}
                 >
@@ -179,7 +217,9 @@ const SignUpScreen = ({ navigation }: any) => {
                 </Pressable>
 
                 <Pressable onPress={() => navigation.navigate('SignIn')}>
-                  <Text style={stylesSignUp.linkText}>Already have an account? Sign In</Text>
+                  <Text style={stylesSignUp.linkText}>
+                    Already have an account? Sign In
+                  </Text>
                 </Pressable>
               </>
             )}
@@ -190,4 +230,4 @@ const SignUpScreen = ({ navigation }: any) => {
   );
 };
 
-export default SignUpScreen; 
+export default SignUpScreen;

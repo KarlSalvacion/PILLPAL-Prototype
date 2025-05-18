@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Pressable, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
-import { useAuth } from '../context/AuthContext';
-import stylesSignIn from '../styles/styles-screen/StylesSignInScreen';
 import { Ionicons } from '@expo/vector-icons';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../config/firebase'; // 
+import stylesSignIn from '../styles/styles-screen/StylesSignInScreen';
 
 const SignInSchema = Yup.object().shape({
   email: Yup.string()
@@ -16,7 +17,6 @@ const SignInSchema = Yup.object().shape({
 });
 
 const SignInScreen = ({ navigation }: any) => {
-  const { signIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -30,17 +30,19 @@ const SignInScreen = ({ navigation }: any) => {
       >
         <View style={stylesSignIn.container}>
           <Text style={stylesSignIn.title}>Welcome Back</Text>
-          
+
           <Formik
             initialValues={{ email: '', password: '' }}
             validationSchema={SignInSchema}
             onSubmit={async (values, { setSubmitting }) => {
               try {
-                await signIn(values.email, values.password);
-              } catch (error) {
+                await signInWithEmailAndPassword(auth, values.email, values.password);
+                // 👇 Navigate to main app screen if needed
+                // navigation.replace('Home');
+              } catch (error: any) {
                 Alert.alert(
                   'Sign In Failed',
-                  error instanceof Error ? error.message : 'Invalid email or password',
+                  error.message || 'Invalid email or password',
                   [{ text: 'OK' }]
                 );
               } finally {
@@ -119,4 +121,4 @@ const SignInScreen = ({ navigation }: any) => {
   );
 };
 
-export default SignInScreen; 
+export default SignInScreen;
